@@ -1,14 +1,33 @@
 ﻿using Discord;
+using Discord.WebSocket;
 using static Antigrav.Main;
 
 namespace CtqaBto;
 // random utils here
 public static class Utils {
+    public static string FormatTime(double time) {
+        int days = (int)(time / 86400);
+        int hours = (int)(time / 3600) % 24;
+        int mins = (int)(time / 60) % 60;
+        double secs = time % 60;
+        return (days == 0 ? "" : $"{days} days ") +
+               (hours == 0 ? "" : $"{hours} hours ") +
+               (mins == 0 ? "" : $"{mins} minutes ") +
+               (secs == 0 ? "" : $"{Math.Round(secs, 2)} seconds");
+    }
+
     public static int RandRange(int start, int end) {
         lock (Data.random) {
             return Data.random.Next(start, end + 1);
         }
     }
+
+    public static T Choice<T>(IEnumerable<T> enumerable) {
+        lock (Data.random) {
+            return enumerable.ElementAt(Data.random.Next(enumerable.Count()));
+        }
+    }
+
     public static string GetFolderPath(IEnumerable<string> args) {
         string folder = "";
 
@@ -46,9 +65,18 @@ public static class Utils {
 
     public static Dictionary<ulong, SpawnMessageData> GetCtqasSpawnData() => LoadFromFile<Dictionary<ulong, SpawnMessageData>>(Data.CtqasPath) ?? [];
 
-    public static void SaveCtqasSpawnData(Dictionary<ulong, SpawnMessageData> data) => DumpToFile(data, Data.CtqasPath);
+    public static void SetCtqasSpawnData(Dictionary<ulong, SpawnMessageData> data) => DumpToFile(data, Data.CtqasPath);
 
     public static string GetURL(this IGuildChannel channel) => $"https://discord.com/channels/{channel.Guild.Id}/{channel.Id}";
+
+    public static ulong GuildId(this SocketMessage message) => ((IGuildChannel)message.Channel).Guild.Id;
+
+    public static string FullName(this IUser user) => user.Username + (user.DiscriminatorValue == 0 ? "" : $"#{user.Discriminator}");
+
+    public static string GetEmoji(string name) {
+        GuildEmote? e = Program.client.GetGuild(1178285875608698951).Emotes.FirstOrDefault(e => e.Name == name);
+        return e == null ? "emoji fail" : e.ToString();
+    }
 
     public static bool SkillIssued(this IUser user) => !(Data.TrustedPeople.Contains(user.Id) || (user is IGuildUser guildUser && guildUser.GuildPermissions.Administrator));
 }

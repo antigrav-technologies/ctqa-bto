@@ -5,6 +5,8 @@ using Discord.WebSocket;
 using static CtqaBto.Utils;
 using static CtqaBto.Ctqas;
 using кансоль = System.Console;
+using static Antigrav.Main;
+using System.Globalization;
 
 namespace CtqaBto;
 
@@ -56,6 +58,106 @@ internal class Program {
     }
 
     private async Task<Task> Client_MessageReceived(SocketMessage message) {
+        try {
+            if (message.Channel is SocketDMChannel) {
+                await message.Channel.SendMessageAsync("good job! use ctqa!lol_i_have_dmed_ctqa_and_got_an_ach");
+                return Task.CompletedTask;
+            }
+            var ctqasSpawnData = GetCtqasSpawnData();
+            SpawnMessageData? spawnMessageData = null;
+            string sayToCatch = "ctqa";
+            if (ctqasSpawnData.TryGetValue(message.Channel.Id, out var value)) spawnMessageData = value;
+            if (spawnMessageData != null) sayToCatch = ((SpawnMessageData)spawnMessageData).SayToCatch;
+            string msg = message.Content;
+            string msgl = msg.ToLower();
+            if (message.MentionedUsers.Any(x => x.Id == client.CurrentUser.Id)) {
+                // await achembed(message, message.author, "ping")
+            }
+            if (msg == "полимерная глина в шкиле 🦈 и тысяча рублей за 48 сообщений в теме на солнце ☀️ бесплатно и смерть 💀 и не только у 😎") {
+                // await achembed(message, message.author, "test but actually a test")
+            }
+            if (sayToCatch == msg.ToUpper()) {
+                if (sayToCatch == "ctqa") {
+                    // await achembed(message, message.author, "CTQA")
+                }
+                else {
+                    // await achembed(message, message.author, "NOTCTQA")
+                }
+            }
+
+            if (spawnMessageData != null && msgl == "cat") {
+                await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));
+            }
+            if (msg.Equals(sayToCatch, StringComparison.CurrentCultureIgnoreCase)) {
+                if (spawnMessageData != null) {
+                    // await achembed(message, message.author, "first")
+                    ctqasSpawnData.Remove(message.Channel.Id);
+                    SetCtqasSpawnData(ctqasSpawnData);
+                    IMessage? ctqaMessage = await message.Channel.GetMessageAsync(((SpawnMessageData)spawnMessageData).MessageId);
+                    double time = Math.Abs(Math.Round((message.CreatedAt - ctqaMessage.CreatedAt).TotalSeconds, 2));
+                    CtqaType type = ((SpawnMessageData)spawnMessageData).Type;
+
+                    long amount;
+                    using (var inv = Inventory.Load(message.GuildId(), message.Author.Id)) {
+                        inv.UpdateCatchTime(time);
+                        if (inv.FastestCatch < 5) {
+                            // await achembed(message, message.author, "fastcatcher")
+                        }
+                        if (inv.SlowestCatch > 1) {
+                            // await achembed(message, message.author, "slowcatcher")
+                        }
+                        amount = inv.GiveCtqa(type);
+                    }
+                    try {
+                        await ctqaMessage.DeleteAsync();
+                        await message.DeleteAsync();
+                    }
+                    catch (Exception ex) {
+                        await ((IMessageChannel)message).SendMessageAsync($"failed to delete ctqa spawn or \"ctqa\" message\n```\n{ex.Message}\n```");
+                    }
+                    string emoji = type.Emoji();
+                    await message.Channel.SendMessageAsync(@$"{message.Author} COUGHT... {type.Name()} CTQA!!!!1! {emoji}{emoji}{emoji} (100% REAL NOT CLICKBAIT)
+bro now has {amount} ctqas of dat type ‼️😱🔥
+OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ HOW! ? 1 ? 1 ? 1!1!1 ? 1");
+                }
+                else {
+                    await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));
+                }
+            }
+
+            if (msg == Data.Datamine) {
+                await message.DeleteAsync();
+                // await achembed(message, message.author, "dataminer")
+            }
+
+            if (msgl == "сейф") {
+                // await achembed(message, message.author, "сейф")
+            }
+
+            if (msgl == "please do the ctqa") {
+                // a = await achembed(message, message.author, "pleasedothectqa")
+                // await message.reply(file = disnake.File("socialcredit.png"))
+                // if a:
+                //     give_cat(message.guild.id, message.author.id, "Fine", 1)
+            }
+
+            if (msgl == "please do not the ctqa") {
+                await message.ReplyAsync($"ok then\n{message.Author.Mention} lost one fine ctqa!!!!11");
+                Inventory.DecrementCtqa(message.GuildId(), message.Author.Id, CtqaType.Fine);
+                //await achembed(message, message.author, "pleasedonotthectqa")
+            }
+                
+            if (msgl.Contains(":syating_ctqa:") && msgl.Contains("🛐")) {
+                // await achembed(message, message.author, "worship")
+            }
+            
+            if ("ctqa!lol_i_have_dmed_ctqa_and_got_an_ach" == msg) {
+                // await achembed(message, message.author, "dm")
+            }
+        }
+        catch (Exception ex) {
+            await message.ReplyAsync($"гавно в шкиле\n```\n{ex}\n```");
+        }
         return Task.CompletedTask;
     }
 
@@ -70,6 +172,7 @@ internal static class Data {
     public static DateTime StartTime = DateTime.MinValue;
     public static readonly string CtqaChannelsPath = GetFilePath(["ctqa channels.antigrav"], "[]");
     public static readonly string CtqasPath = GetFilePath(["ctqas.antigrav"], "{}");
+    public static readonly string CtqasImagesPath = "D:\\CtqaBto\\ctqas that are syating";
     public static async Task<RestMessage> ReplyAsync(this IMessage msg, string? text = null, bool isTTS = false, Embed? embed = null, RequestOptions? options = null, AllowedMentions? allowedMentions = null, MessageComponent? components = null, ISticker[]? stickers = null, Embed[]? embeds = null, MessageFlags flags = MessageFlags.None) {
         return (RestMessage)await msg.Channel.SendMessageAsync(text, isTTS, embed, options, allowedMentions, new MessageReference(msg.Id), components, stickers, embeds, flags);
     }
@@ -79,6 +182,31 @@ internal static class Data {
         1127903408179904662,  // firewall6
         801078409076670494    // hexahedron1
     ];
+    public static readonly string[] StartText = [
+        "hello fellow kids i have started",
+        "wake up its RUIN CTQA SOURCE CODE 🔥🔥🔥🔥 o'clock",
+        "```\nAntigrav.Decoder.ANTIGRAVDecodeError\n  HResult=0x80131500\n  Сообщение = Expecting value: line 1 column 1 (char 0)\n  Источник = Antigrav\n  Трассировка стека:\n   в Antigrav.Decoder.Decode[T](String s) в C:\\Users\\User\\source\\repos\\Antigrav\\Antigrav\\Decoder.cs:строка 508\n   в Antigrav.Main.LoadFromString[T](String s) в C:\\Users\\User\\source\\repos\\Antigrav\\Antigrav\\Main.cs:строка 156\\   в CtqaBto.Program.Main() в D:\\CtqaBto\\CtqaBto\\Program.cs:строка 20\n   в CtqaBto.Program.<Main>()\n```",
+        "also try kat bot",
+        "gaming",
+        $"ctqa bto stats:\n{Program.client.Guilds.Count} servers\n{Program.client.Guilds.Select(x => x.MemberCount).Sum()} total members",
+        "gaming",
+        "Also try NBTExplorer!",
+        "int qwertyuiop[]",
+        "hello i am mister balls",
+        "start Ctqa bto Now or something else 🐎🤯🤯😉😉🎓😊😊",
+        "Who the Hell Started my Ctqa bto ‼️",
+        "kreisi purglar paking peanuts",
+        "HELLO THERE EVERYONE my name is INSANE and i am the CEO of your MOTHER",
+        "insert some epic motivational uplifting text here",
+        "cool but unfortunately nobody asked",
+        "simon says say h",
+        "cellua",
+        "#minecraftphysics",
+        "download tema app for unlimited slinx attic invite",
+        "CtqaLink",
+        "29A:AA79//@A>@4-->.4>"
+    ];
+    public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
 }
 internal class CommandModule : InteractionModuleBase {
     public required InteractionService Service { get; set; }
@@ -100,7 +228,7 @@ internal class CommandModule : InteractionModuleBase {
     }
 
     [SlashCommand("setup", "make bot spawn ctqas here (ADMIN ONLY)")]
-    public async Task Setup() {
+    public async Task SetupSlashCommand() {
         if (Context.User.SkillIssued()) {
             await RespondAsync("lmao perms fail imagine having a skill issue <:pointlaugh:1178287922756194394>");
             return;
@@ -137,4 +265,24 @@ internal class CommandModule : InteractionModuleBase {
         await RespondAsync($"**#{Context.Channel}** was added to ctqa spawn list ✅");
         SetCtqasChannels(channels);
     }
+
+    [SlashCommand("inv", "view your inventory")]
+    public async Task InventorySlashCommand(IUser? member = null) => await RespondAsync(embed: Inventory.GetEmbed(
+        Context.Guild.Id,
+        member ?? Context.User,
+        member == null
+    ));
+
+    [SlashCommand("info", "get info about bot")]
+    public async Task InfoSlashCommand() => await RespondAsync(embed: new EmbedBuilder() {
+        Title = "ctqa bto",
+        Description = $@"[support server](https://discord.gg/QnXad4qY4U) | [source code](https://github.com/tema5002/ctqa-bto)
+
+i dont really know what to say here
+run /setup to make ctqas spawn in channel
+if they randomly stopped spawning try running /setup again
+
+thanks to:
+- **{Program.client.GetUser(986132157967761408).FullName()}** for syating ctqa image and making ctqa icons"
+    }.Build());
 }

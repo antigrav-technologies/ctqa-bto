@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using static CtqaBto.Ctqas;
 using static CtqaBto.Utils;
 
 namespace CtqaBto;
@@ -84,7 +85,7 @@ public static class Ctqas {
         CtqaType.Pentachoron,
         CtqaType.NetscapeAd
     ];
-    private static readonly CtqaType[] CtqaTypes = [.. typeDict.Keys];
+    public static readonly CtqaType[] CtqaTypes = [.. typeDict.Keys];
     public static CtqaType RandomCtqaType() {
         int totalWeight = typeDict.Values.Sum();
         int randomValue = new Random().Next(totalWeight);
@@ -101,13 +102,15 @@ public static class Ctqas {
         CtqaType.NetscapeAd => "Netscape Ad",
         _ => Enum.GetName(typeof(CtqaType), type) ?? "Unknown"
     };
+    public static string Emoji(this CtqaType type) => GetEmoji(type.Name().ToLower() + "ctqa");
     public static async Task<bool> SpawnCtqaAsync(IMessageChannel channel) {
         var data = GetCtqasSpawnData();
         if (!data.ContainsKey(channel.Id)) {
             CtqaType type = RandomCtqaType();
-            var message = await channel.SendMessageAsync($"{type.Name()} ctqa was supposed to spawn in this channel");
+            string emoji = type.Emoji();
+            var message = await channel.SendFileAsync(GetCtqaImage(type), $"NO FUCJING WAY A {type.Name()} CTQA APPEARED HERE IT IS TYPE \"ctqa\" AND YOU WILL CATCH IT ↪️↪️↪️➡️➡️➡️➡️↪️➡️ {emoji}‼️‼️");
             data[channel.Id] = new(type, message.Id);
-            SaveCtqasSpawnData(data);
+            SetCtqasSpawnData(data);
             return true;
         }
         return false;
@@ -119,7 +122,7 @@ public static class Ctqas {
             if (guild != null) {
                 SocketGuildChannel? channel = guild.GetChannel(tuple.Item2);
                 if (channel != null) {
-                    await ((IMessageChannel)channel).SendMessageAsync("HELLO FELLOW KIDS I HAVE STARTED R8GQ9H[MNBUGUILM;L,");
+                    await ((IMessageChannel)channel).SendMessageAsync(Choice(Data.StartText));
                 }
                 else channels.Remove(tuple);
             }
@@ -140,7 +143,14 @@ public static class Ctqas {
                 else channels.Remove(tuple);
             }
             SetCtqasChannels(channels);
-            await Task.Delay(RandRange(2 * 60, 20 * 60));
+            await Task.Delay(RandRange(2 * 1000 * 60, 20 * 1000 * 60));
         }
     }
+    public static string GetCtqaImage(CtqaType type) => Path.Combine(Data.CtqasImagesPath, type switch {
+        CtqaType.Inverted => "inverted_ctqa.webp",
+        CtqaType.Reverse => "reverse_ctqa.webp",
+        CtqaType.Professor => "syating_professor_ctqa.webp",
+        CtqaType.Baby => "baby_ctqa.webp",
+        _ => "syating_ctqa.webp"
+    });
 }
