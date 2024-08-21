@@ -4,9 +4,8 @@ using Discord.Rest;
 using Discord.WebSocket;
 using static CtqaBto.Utils;
 using static CtqaBto.Ctqas;
+using static CtqaBto.Achievements;
 using кансоль = System.Console;
-using static Antigrav.Main;
-using System.Globalization;
 
 namespace CtqaBto;
 
@@ -71,17 +70,17 @@ internal class Program {
             string msg = message.Content;
             string msgl = msg.ToLower();
             if (message.MentionedUsers.Any(x => x.Id == client.CurrentUser.Id)) {
-                // await achembed(message, message.author, "ping")
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.PingBot);
             }
             if (msg == "полимерная глина в шкиле 🦈 и тысяча рублей за 48 сообщений в теме на солнце ☀️ бесплатно и смерть 💀 и не только у 😎") {
-                // await achembed(message, message.author, "test but actually a test")
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Unknown);
             }
             if (sayToCatch == msg.ToUpper()) {
                 if (sayToCatch == "ctqa") {
-                    // await achembed(message, message.author, "CTQA")
+                    await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.CTQA);
                 }
                 else {
-                    // await achembed(message, message.author, "NOTCTQA")
+                    await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.NOTCTQA);
                 }
             }
 
@@ -90,7 +89,6 @@ internal class Program {
             }
             if (msg.Equals(sayToCatch, StringComparison.CurrentCultureIgnoreCase)) {
                 if (spawnMessageData != null) {
-                    // await achembed(message, message.author, "first")
                     ctqasSpawnData.Remove(message.Channel.Id);
                     SetCtqasSpawnData(ctqasSpawnData);
                     IMessage? ctqaMessage = await message.Channel.GetMessageAsync(((SpawnMessageData)spawnMessageData).MessageId);
@@ -99,12 +97,13 @@ internal class Program {
 
                     long amount;
                     using (var inv = Inventory.Load(message.GuildId(), message.Author.Id)) {
+                        await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.FirstCtqa);
                         inv.UpdateCatchTime(time);
                         if (inv.FastestCatch < 5) {
-                            // await achembed(message, message.author, "fastcatcher")
+                            await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.FastCatcher);
                         }
                         if (inv.SlowestCatch > 1) {
-                            // await achembed(message, message.author, "slowcatcher")
+                            await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.SlowCatcher);
                         }
                         amount = inv.GiveCtqa(type);
                     }
@@ -127,32 +126,31 @@ OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ 
 
             if (msg == Data.Datamine) {
                 await message.DeleteAsync();
-                // await achembed(message, message.author, "dataminer")
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Datamine);
             }
 
             if (msgl == "сейф") {
-                // await achembed(message, message.author, "сейф")
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Сейф);
             }
 
             if (msgl == "please do the ctqa") {
-                // a = await achembed(message, message.author, "pleasedothectqa")
-                // await message.reply(file = disnake.File("socialcredit.png"))
-                // if a:
-                //     give_cat(message.guild.id, message.author.id, "Fine", 1)
+                await message.ReplyFileAsync("socialcredit.png");
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.PleaseDoTheCtqa);
             }
 
             if (msgl == "please do not the ctqa") {
                 await message.ReplyAsync($"ok then\n{message.Author.Mention} lost one fine ctqa!!!!11");
-                Inventory.DecrementCtqa(message.GuildId(), message.Author.Id, CtqaType.Fine);
-                //await achembed(message, message.author, "pleasedonotthectqa")
+                using var inv = Inventory.Load(message.GuildId(), message.Author.Id);
+                inv.RemoveCtqa(CtqaType.Fine);
+                await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.PleaseDoNotTheCtqa);
             }
                 
             if (msgl.Contains(":syating_ctqa:") && msgl.Contains("🛐")) {
-                // await achembed(message, message.author, "worship")
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Worship);
             }
             
             if ("ctqa!lol_i_have_dmed_ctqa_and_got_an_ach" == msg) {
-                // await achembed(message, message.author, "dm")
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.DMBot);
             }
         }
         catch (Exception ex) {
@@ -172,10 +170,7 @@ internal static class Data {
     public static DateTime StartTime = DateTime.MinValue;
     public static readonly string CtqaChannelsPath = GetFilePath(["ctqa channels.antigrav"], "[]");
     public static readonly string CtqasPath = GetFilePath(["ctqas.antigrav"], "{}");
-    public static readonly string CtqasImagesPath = "D:\\CtqaBto\\ctqas that are syating";
-    public static async Task<RestMessage> ReplyAsync(this IMessage msg, string? text = null, bool isTTS = false, Embed? embed = null, RequestOptions? options = null, AllowedMentions? allowedMentions = null, MessageComponent? components = null, ISticker[]? stickers = null, Embed[]? embeds = null, MessageFlags flags = MessageFlags.None) {
-        return (RestMessage)await msg.Channel.SendMessageAsync(text, isTTS, embed, options, allowedMentions, new MessageReference(msg.Id), components, stickers, embeds, flags);
-    }
+    public static readonly string ImagesPath = "D:\\CtqaBto\\src";
     public static readonly ulong[] TrustedPeople = [
         558979299177136164,   // tema5002
         1204799892988629054,  // cake64

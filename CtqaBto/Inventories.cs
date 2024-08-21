@@ -1,7 +1,9 @@
 ﻿using static CtqaBto.Ctqas;
 using static CtqaBto.Utils;
+using static CtqaBto.Achievements;
 using static Antigrav.Main;
 using Discord;
+using Discord.WebSocket;
 
 namespace CtqaBto;
 
@@ -16,7 +18,7 @@ public struct SpawnMessageData(CtqaType type = CtqaType.Unknown, ulong messageId
 
 public class Inventory : IDisposable {
     [AntigravProperty("achs")]
-    public List<string> Achievements { get; private set; } = [];
+    public List<AchievementId> Achievements { get; private set; } = [];
 
     [AntigravProperty("fastest_catch", float.PositiveInfinity)]
     public double FastestCatch { get; private set; } = float.PositiveInfinity;
@@ -29,20 +31,18 @@ public class Inventory : IDisposable {
     private ulong GuildId;
     private ulong MemberId;
 
-    public void UpdateCatchTime(double time) {
-        FastestCatch = Math.Min(time, FastestCatch);
-        SlowestCatch = Math.Max(Math.Round(time / 3600, 2), SlowestCatch);
-    }
-
     private static string GetInventoryPath(ulong guildId, ulong memberId) => GetFilePath(["ctqas", guildId.ToString(), $"{memberId}.antigrav"], "{}");
-
     private long this[CtqaType type] {
         get => Ctqas.TryGetValue(type, out long value) ? value : 0;
         set => Ctqas[type] = value;
     }
-
     public long GiveCtqa(CtqaType type) => ++this[type];
-
+    public long RemoveCtqa(CtqaType type) => --this[type];
+    public bool HasAch(AchievementId id) => Achievements.Contains(id);
+    public void UpdateCatchTime(double time) {
+        FastestCatch = Math.Min(time, FastestCatch);
+        SlowestCatch = Math.Max(Math.Round(time / 3600, 2), SlowestCatch);
+    }
     public static long IncrementCtqa(ulong guildId, ulong memberId, CtqaType type) {
         long v;
         using (var inv = Load(guildId, memberId)) {
@@ -51,7 +51,6 @@ public class Inventory : IDisposable {
         }
         return v;
     }
-
     public static long DecrementCtqa(ulong guildId, ulong memberId, CtqaType type) {
         long v;
         using (var inv = Load(guildId, memberId)) {
@@ -60,7 +59,6 @@ public class Inventory : IDisposable {
         }
         return v;
     }
-
     public static Inventory Load(ulong guildId, ulong memberId) {
         var inv = LoadFromFile<Inventory>(GetInventoryPath(guildId, memberId)) ?? new Inventory();
         inv.GuildId = guildId;
@@ -68,12 +66,10 @@ public class Inventory : IDisposable {
         return inv;
     }
     public void Save() => DumpToFile(this, GetInventoryPath(GuildId, MemberId));
-
     public void Dispose() {
         Save();
         GC.SuppressFinalize(this);
     }
-
     public static Embed GetEmbed(ulong guildId, IUser member, bool self) {
         var inv = Load(guildId, member.Id);
         return new EmbedBuilder() {
@@ -82,5 +78,35 @@ public class Inventory : IDisposable {
             Fields = inv.Ctqas.Select(c => new EmbedFieldBuilder() { Name = $"{c.Key.Emoji()} {c.Key.Name()}", Value = c.Value.ToString(), IsInline = true }).ToList(),
             Footer = new() { Text = $"Total ctqas: {inv.Ctqas.Select(x => x.Value).Sum()}" }
         }.Build();
+    }
+    public async Task<Task> GiveAchAsync(IMessageChannel channel, IUser user, AchievementId id) {
+        if (channel is SocketDMChannel) {
+            await channel.SendMessageAsync("hell naw you cant get achs in dms");
+            return Task.CompletedTask;
+        }
+        if (id == AchievementId.Unknown) {
+            await channel.SendMessageAsync(embed: MakeAchEmbed(id, user.FullName()));
+            return Task.CompletedTask;
+        }
+        if (HasAch(id)) return Task.CompletedTask;
+        Achievements.Add(id);
+        await channel.SendMessageAsync(embed: MakeAchEmbed(id, user.FullName()));
+        return Task.CompletedTask;
+    }
+    public static async Task<Task> GiveAchAsyncStatic(IMessageChannel channel, ulong guildId, IUser user, AchievementId id) {
+        if (channel is SocketDMChannel) {
+            await channel.SendMessageAsync("hell naw you cant get achs in dms");
+            return Task.CompletedTask;
+        }
+        if (id == AchievementId.Unknown) {
+            await channel.SendMessageAsync(embed: MakeAchEmbed(id, user.FullName()));
+            return Task.CompletedTask;
+        }
+        using (var inv = Load(guildId, user.Id)) {
+            if (inv.HasAch(id)) return Task.CompletedTask;
+            inv.Achievements.Add(id);
+            await channel.SendMessageAsync(embed: MakeAchEmbed(id, user.FullName()));
+        }
+        return Task.CompletedTask;
     }
 }

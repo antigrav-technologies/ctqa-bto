@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using static CtqaBto.Ctqas;
 using static CtqaBto.Utils;
 
 namespace CtqaBto;
@@ -146,7 +145,7 @@ public static class Ctqas {
             await Task.Delay(RandRange(2 * 1000 * 60, 20 * 1000 * 60));
         }
     }
-    public static string GetCtqaImage(CtqaType type) => Path.Combine(Data.CtqasImagesPath, type switch {
+    public static string GetCtqaImage(CtqaType type) => GetImage(type switch {
         CtqaType.Inverted => "inverted_ctqa.webp",
         CtqaType.Reverse => "reverse_ctqa.webp",
         CtqaType.Professor => "syating_professor_ctqa.webp",
