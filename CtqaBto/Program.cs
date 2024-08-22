@@ -1,11 +1,12 @@
-﻿using Discord;
+﻿using System.Reflection;
+using Discord;
 using Discord.Interactions;
-using Discord.Rest;
 using Discord.WebSocket;
 using static CtqaBto.Utils;
 using static CtqaBto.Ctqas;
 using static CtqaBto.Achievements;
 using кансоль = System.Console;
+[assembly: AssemblyVersion("1.0.*")]
 
 namespace CtqaBto;
 
@@ -44,7 +45,42 @@ internal class Program {
     }
 
     private async Task<Task> InteractionExecuted(SocketMessageComponent component) {
+        ulong guildId = (ulong)component.GuildId!;
         string h = component.Data.CustomId;
+        string[] t = h.Split(";");
+        if (t[0] == "UPDATELB") {
+            //embed = GetLeaderboardEmbed(ctx, t[1])
+            //await ctx.response.edit_message(embed=embed, components=lb_components(t[1]))
+        }
+        else if (t[0] == "SENDACHS") {
+            if (t[1] == component.User.Id.ToString("x")) await component.RespondAsync(
+                embed: GetAchEmbed(guildId, component.User.Id, AchievementCategory.CtqaHunt),
+                components: GetAchComponents(AchievementCategory.CtqaHunt),
+                ephemeral: true
+            );
+            else await component.RespondAsync("nouuuuu 😛😛😛😛😛😛 thats 🫂🫂🫂🫂 not 🔕🔕🔕🔕 yours <:insane:1136262312366440582><:insane:1136262312366440582>😼<:insane:1136262312366440582><:insane:1136262312366440582><:insane:1136262312366440582><:typing:1133071627370897580><:typing:1133071627370897580><:typing:1133071627370897580>", ephemeral: true);
+        }
+        
+        else if (t[0] == "UPDATEACHS") await component.UpdateAsync(m => {
+            m.Embed = GetAchEmbed(guildId, component.User.Id, (AchievementCategory)int.Parse(t[1]));
+            m.Components = GetAchComponents((AchievementCategory)int.Parse(t[1]));
+        });
+        /*
+        elif t[0] == "PINGONREPLY":
+            id_to_update = int(t[1])
+            if id_to_update != ctx.author.id:
+                amount = give_cat(ctx.guild.id, ctx.author.id, 'Fine', -1)
+                await ctx.send(f"you now have {amount} Fine ctqas for using not yours butotn 🍞", ephemeral=True)
+            else:
+                config = get_user_config(ctx.author.id)
+                config["ping_on_catch"] = not config.get("ping_on_catch", True)
+                save_user_config(config, ctx.author.id)
+                await ctx.response.edit_message(
+                    embed=disnake.Embed(title="your config 🍹🍹🍹🍹🍹🍹🍹🍹",
+                                        description=f"```json\n{config}\n```"),
+                    components=config_components(config, ctx.author.id)
+                )*/
+        else await component.RespondAsync($"o cholera 🔄 czy to Freddy Fazbear 🧸 har har har har har har har har har har har har 😛\ncomponent.Data.CustomId if it will be any useful>: `{component.Data.CustomId}`", ephemeral: true);
         return Task.CompletedTask;
     }
 
@@ -134,7 +170,7 @@ OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ 
             }
 
             if (msgl == "please do the ctqa") {
-                await message.ReplyFileAsync("socialcredit.png");
+                await message.ReplyFileAsync(GetImage("socialcredit.png"));
                 await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.PleaseDoTheCtqa);
             }
 
@@ -202,6 +238,8 @@ internal static class Data {
         "29A:AA79//@A>@4-->.4>"
     ];
     public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
+    public static readonly string TrophyUnlocked = "<:ctqa_trophy:1200918336444309524>";
+    public static readonly string TrophyLocked = "<:no_ctqa_trophy:1200918339938156554>";
 }
 internal class CommandModule : InteractionModuleBase {
     public required InteractionService Service { get; set; }
@@ -262,16 +300,23 @@ internal class CommandModule : InteractionModuleBase {
     }
 
     [SlashCommand("inv", "view your inventory")]
-    public async Task InventorySlashCommand(IUser? member = null) => await RespondAsync(embed: Inventory.GetEmbed(
+    public async Task InventorySlashCommand(IUser? member = null) => await RespondAsync(embed: Inventory.GetInvEmbed(
         Context.Guild.Id,
         member ?? Context.User,
         member == null
     ));
 
+    [SlashCommand("achs", "see your achievements")]
+    public async Task AchsSlashCommand() => await RespondAsync(
+        embed: new EmbedBuilder() { Title = "Your achievements:", Description = GetAchsCountStatic(Context.Guild.Id, Context.User.Id) }.Build(),
+        components: MakeComponents([new Button("View achievements", $"SENDACHS;{Context.User.Id:x4}")])
+    );
+
     [SlashCommand("info", "get info about bot")]
     public async Task InfoSlashCommand() => await RespondAsync(embed: new EmbedBuilder() {
-        Title = "ctqa bto",
+        Title = $"ctqa bto",
         Description = $@"[support server](https://discord.gg/QnXad4qY4U) | [source code](https://github.com/tema5002/ctqa-bto)
+{GetVersion()}
 
 i dont really know what to say here
 run /setup to make ctqas spawn in channel

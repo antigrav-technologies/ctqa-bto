@@ -31,7 +31,7 @@ public class Inventory : IDisposable {
     private ulong GuildId;
     private ulong MemberId;
 
-    private static string GetInventoryPath(ulong guildId, ulong memberId) => GetFilePath(["ctqas", guildId.ToString(), $"{memberId}.antigrav"], "{}");
+    private static string GetInventoryPath(ulong guildId, ulong memberId) => GetFilePath(["ctqas", guildId.ToString(), $"{memberId}.antigrav"], "null");
     private long this[CtqaType type] {
         get => Ctqas.TryGetValue(type, out long value) ? value : 0;
         set => Ctqas[type] = value;
@@ -70,7 +70,7 @@ public class Inventory : IDisposable {
         Save();
         GC.SuppressFinalize(this);
     }
-    public static Embed GetEmbed(ulong guildId, IUser member, bool self) {
+    public static Embed GetInvEmbed(ulong guildId, IUser member, bool self) {
         var inv = Load(guildId, member.Id);
         return new EmbedBuilder() {
             Title = self ? "Your ctqas" : $"{member.FullName()}'s ctqas",

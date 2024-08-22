@@ -5,6 +5,11 @@ using static Antigrav.Main;
 namespace CtqaBto;
 // random utils here
 public static class Utils {
+    public static string GetVersion() {
+        Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version!;
+        DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
+        return $"build {version} ({buildDate})";
+    }
     public static string FormatTime(double time) {
         int days = (int)(time / 86400);
         int hours = (int)(time / 3600) % 24;
@@ -85,4 +90,26 @@ public static class Utils {
     public static async Task<IUserMessage> ReplyAsync(this IMessage msg, string? text = null, bool isTTS = false, Embed? embed = null, RequestOptions? options = null, AllowedMentions? allowedMentions = null, MessageComponent? components = null, ISticker[]? stickers = null, Embed[]? embeds = null, MessageFlags flags = MessageFlags.None, PollProperties? poll = null) => await msg.Channel.SendMessageAsync(text, isTTS, embed, options, allowedMentions, new MessageReference(msg.Id), components, stickers, embeds, flags, poll);
     
     public static async Task<IUserMessage> ReplyFileAsync(this IMessage msg, string filePath, string? text = null, bool isTTS = false, Embed? embed = null, RequestOptions? options = null, bool isSpoiler = false, AllowedMentions? allowedMentions = null, MessageComponent? components = null, ISticker[]? stickers = null, Embed[]? embeds = null, MessageFlags flags = MessageFlags.None, PollProperties? poll = null) => await msg.Channel.SendFileAsync(filePath, text, isTTS, embed, options, isSpoiler, allowedMentions, new MessageReference(msg.Id), components, stickers, embeds, flags, poll);
+
+    public readonly struct Button(string? label = null, string? customId = null, ButtonStyle style = ButtonStyle.Primary, string? url = null, IEmote? emote = null, bool isDisabled = false, ulong? skuId = null) {
+        public string? CustomId { get; } = customId;
+        public ButtonStyle Style { get; } = style;
+        public string? Url { get; } = url;
+        public string? Label { get; } = label;
+        public bool IsDisabled { get; } = isDisabled;
+        public IEmote? Emote { get; } = emote;
+        public ulong? SkuId { get; } = skuId;
+    }
+
+    public static MessageComponent MakeComponents(IEnumerable<Button> buttons) => new ComponentBuilder().AddRow(new ActionRowBuilder() {
+        Components = buttons.Select(b => new ButtonBuilder() {
+            CustomId = b.CustomId,
+            Emote = b.Emote,
+            IsDisabled = b.IsDisabled,
+            Label = b.Label,
+            SkuId = b.SkuId,
+            Style = b.Style,
+            Url = b.Url
+        }.Build()).Cast<IMessageComponent>().ToList()
+    }).Build();
 }
