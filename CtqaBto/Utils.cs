@@ -5,11 +5,14 @@ using static Antigrav.Main;
 namespace CtqaBto;
 // random utils here
 public static class Utils {
+    public static string GenerateRandomCoupon() => RandomUppercaseAsciis(4) + '-' + RandomUppercaseAsciis(4);
+
     public static string GetVersion() {
         Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version!;
         DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
         return $"build {version} ({buildDate})";
     }
+
     public static string FormatTime(double time) {
         int days = (int)(time / 86400);
         int hours = (int)(time / 3600) % 24;
@@ -21,17 +24,29 @@ public static class Utils {
                (secs == 0 ? "" : $"{Math.Round(secs, 2)} seconds");
     }
 
+    public static int RandInt(int start, int end) {
+        lock (Data.random) {
+            return Data.random.Next(start, end);
+        }
+    }
+
+    public static int RandInt(int end) => RandInt(0, end);
+
     public static int RandRange(int start, int end) {
         lock (Data.random) {
             return Data.random.Next(start, end + 1);
         }
     }
 
-    public static T Choice<T>(IEnumerable<T> enumerable) {
-        lock (Data.random) {
-            return enumerable.ElementAt(Data.random.Next(enumerable.Count()));
-        }
-    }
+    public static int RandIntFromSeed(int seed, int start, int end) => new Random(seed).Next(start, end);
+
+    public static int RandIntFromString(string seed, int start, int end) => RandIntFromSeed(seed.GetHashCode(), start, end);
+
+    public static T Choice<T>(IEnumerable<T> enumerable) => enumerable.ElementAt(RandInt(enumerable.Count()));
+
+    public static char RandomUppercaseAscii() => Choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+
+    public static string RandomUppercaseAsciis(int length) => string.Join("", Enumerable.Range(0, length).Select(static x => RandomUppercaseAscii()));
 
     public static string GetFolderPath(IEnumerable<string> args) {
         string folder = "";
@@ -66,6 +81,8 @@ public static class Utils {
 
     public static string GetImage(string name) => Path.Combine(Data.ImagesPath, name);
 
+    public static string GetName(ulong id) => Program.client.GetUser(id) == null ? "unknown" : Program.client.GetUser(id).FullName();
+
     public static List<Tuple<ulong, ulong>> GetCtqasChannels() => LoadFromFile<List<Tuple<ulong, ulong>>>(Data.CtqaChannelsPath) ?? [];
 
     public static void SetCtqasChannels(List<Tuple<ulong, ulong>> channels) => DumpToFile(channels, Data.CtqaChannelsPath);
@@ -75,6 +92,8 @@ public static class Utils {
     public static void SetCtqasSpawnData(Dictionary<ulong, SpawnMessageData> data) => DumpToFile(data, Data.CtqasPath);
 
     public static string GetURL(this IGuildChannel channel) => $"https://discord.com/channels/{channel.Guild.Id}/{channel.Id}";
+
+    public static IGuild Guild(this SocketMessageComponent component) => ((IGuildChannel)component.Channel).Guild;
 
     public static ulong GuildId(this SocketMessage message) => ((IGuildChannel)message.Channel).Guild.Id;
 

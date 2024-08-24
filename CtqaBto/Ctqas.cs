@@ -44,7 +44,7 @@ public static class Ctqas {
         Pentachoron = 10012,
         NetscapeAd = 10013
     }
-    static readonly Dictionary<CtqaType, int> typeDict = new() {
+    public static readonly Dictionary<CtqaType, int> TypeDict = new() {
         { CtqaType.Fine, 1000 },
         { CtqaType.Nice, 750 },
         { CtqaType.Good, 650 },
@@ -68,7 +68,8 @@ public static class Ctqas {
         { CtqaType.Ultimate, 5 },
         { CtqaType.Cool, 2 }
     };
-    private static readonly CtqaType[] CustomTypes = [
+    public static readonly int TotalWeight = TypeDict.Values.Sum();
+    public static readonly List<CtqaType> CustomTypes = [
         CtqaType.Silly,
         CtqaType.Icosahedron,
         CtqaType.Aflyde,
@@ -84,11 +85,11 @@ public static class Ctqas {
         CtqaType.Pentachoron,
         CtqaType.NetscapeAd
     ];
-    public static readonly CtqaType[] CtqaTypes = [.. typeDict.Keys];
+    public static bool IsCustom(CtqaType type) => CustomTypes.Contains(type);
+    public static readonly CtqaType[] CtqaTypes = [.. TypeDict.Keys];
     public static CtqaType RandomCtqaType() {
-        int totalWeight = typeDict.Values.Sum();
-        int randomValue = new Random().Next(totalWeight);
-        foreach (var kvp in typeDict) {
+        int randomValue = RandInt(0, TotalWeight);
+        foreach (var kvp in TypeDict) {
             randomValue -= kvp.Value;
             if (randomValue < 0) {
                 return kvp.Key;
@@ -101,6 +102,22 @@ public static class Ctqas {
         CtqaType.NetscapeAd => "Netscape Ad",
         _ => Enum.GetName(typeof(CtqaType), type) ?? "Unknown"
     };
+    public static bool TryGetType(string name, out CtqaType? type) {
+        if (name == "8bit") {
+            type = CtqaType.EightBit;
+            return true;
+        }
+        if (name == "Netscape Ad") {
+            type = CtqaType.NetscapeAd;
+            return true;
+        }
+        if (Enum.TryParse<CtqaType>(name, out var v)) {
+            type = v;
+            return true;
+        }
+        type = null;
+        return false;
+    } 
     public static string Emoji(this CtqaType type) => GetEmoji(type.Name().ToLower() + "ctqa");
     public static async Task<bool> SpawnCtqaAsync(IMessageChannel channel) {
         var data = GetCtqasSpawnData();

@@ -5,6 +5,9 @@ using Discord.WebSocket;
 using static CtqaBto.Utils;
 using static CtqaBto.Ctqas;
 using static CtqaBto.Achievements;
+using static CtqaBto.Teapot;
+using static CtqaBto.Leaderboards;
+using static CtqaBto.Configs;
 using кансоль = System.Console;
 [assembly: AssemblyVersion("1.0.*")]
 
@@ -49,22 +52,31 @@ internal class Program {
         string h = component.Data.CustomId;
         string[] t = h.Split(";");
         if (t[0] == "UPDATELB") {
-            //embed = GetLeaderboardEmbed(ctx, t[1])
-            //await ctx.response.edit_message(embed=embed, components=lb_components(t[1]))
+            await component.UpdateAsync(m => {
+                m.Embed = GetLeaderboardsEmbed(component.Guild(), (LeaderboardsType)int.Parse(t[1]));
+                m.Components = GetLeaderboardsComponents((LeaderboardsType)int.Parse(t[1]));
+            });
         }
         else if (t[0] == "SENDACHS") {
-            if (t[1] == component.User.Id.ToString("x")) await component.RespondAsync(
+            if (t[1] == component.User.Id.ToString()) await component.RespondAsync(
                 embed: GetAchEmbed(guildId, component.User.Id, AchievementCategory.CtqaHunt),
                 components: GetAchComponents(AchievementCategory.CtqaHunt),
                 ephemeral: true
             );
             else await component.RespondAsync("nouuuuu 😛😛😛😛😛😛 thats 🫂🫂🫂🫂 not 🔕🔕🔕🔕 yours <:insane:1136262312366440582><:insane:1136262312366440582>😼<:insane:1136262312366440582><:insane:1136262312366440582><:insane:1136262312366440582><:typing:1133071627370897580><:typing:1133071627370897580><:typing:1133071627370897580>", ephemeral: true);
         }
-        
         else if (t[0] == "UPDATEACHS") await component.UpdateAsync(m => {
             m.Embed = GetAchEmbed(guildId, component.User.Id, (AchievementCategory)int.Parse(t[1]));
             m.Components = GetAchComponents((AchievementCategory)int.Parse(t[1]));
         });
+        else if (t[0] == "CLEARTEAPOT") {
+            var brewer = GetBrewer(guildId);
+            brewer.Clear();
+            await component.UpdateAsync(m => {
+                m.Embed = brewer.Info(component.Guild());
+                m.Components = brewer.InfoComponents();
+            });
+        }
         /*
         elif t[0] == "PINGONREPLY":
             id_to_update = int(t[1])
@@ -111,7 +123,8 @@ internal class Program {
             if (msg == "полимерная глина в шкиле 🦈 и тысяча рублей за 48 сообщений в теме на солнце ☀️ бесплатно и смерть 💀 и не только у 😎") {
                 await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Unknown);
             }
-            if (sayToCatch == msg.ToUpper()) {
+#pragma warning disable CA1862 // Используйте перегрузки метода "StringComparison" для сравнения строк без учета регистра
+            if (sayToCatch == msg.ToUpper()) { // ТЫ ТУПОЙ БЛЯ
                 if (sayToCatch == "ctqa") {
                     await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.CTQA);
                 }
@@ -124,7 +137,7 @@ internal class Program {
                 await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));
             }
             if (msg.Equals(sayToCatch, StringComparison.CurrentCultureIgnoreCase)) {
-                if (spawnMessageData != null) {
+                if (spawnMessageData != null && ServerConfig.IsWhitelistedStatic(message.GuildId(), message.Author)) {
                     ctqasSpawnData.Remove(message.Channel.Id);
                     SetCtqasSpawnData(ctqasSpawnData);
                     IMessage? ctqaMessage = await message.Channel.GetMessageAsync(((SpawnMessageData)spawnMessageData).MessageId);
@@ -141,7 +154,7 @@ internal class Program {
                         if (inv.SlowestCatch > 1) {
                             await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.SlowCatcher);
                         }
-                        amount = inv.GiveCtqa(type);
+                        amount = inv.IncrementCtqa(type);
                     }
                     try {
                         await ctqaMessage.DeleteAsync();
@@ -177,7 +190,7 @@ OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ 
             if (msgl == "please do not the ctqa") {
                 await message.ReplyAsync($"ok then\n{message.Author.Mention} lost one fine ctqa!!!!11");
                 using var inv = Inventory.Load(message.GuildId(), message.Author.Id);
-                inv.RemoveCtqa(CtqaType.Fine);
+                inv.DecrementCtqa(CtqaType.Fine);
                 await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.PleaseDoNotTheCtqa);
             }
                 
@@ -187,6 +200,40 @@ OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ 
             
             if ("ctqa!lol_i_have_dmed_ctqa_and_got_an_ach" == msg) {
                 await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.DMBot);
+            }
+            string[] args = message.Content.Split();
+            if (args[0] == "ctqa!whitelist") {
+                if (args.Length < 2) {
+                    await message.ReplyAsync("no id specified");
+                }
+                else if (!message.Author.SkillIssued()) {
+                    ulong id = ulong.Parse(args[1]);
+                    if (ServerConfig.UpdateWhitelistStatic(message.GuildId(), id)) await message.ReplyAsync($"**{GetName(id)}** was whitelisted");
+                    else await message.ReplyAsync($"**{GetName(id)}** was removed from whitelist");
+                }
+            }
+            if (args[0] == "ctqa!custom") {
+                if (args.Length < 2) {
+                    await message.ReplyAsync("no user specified");
+                }
+                else if (!ulong.TryParse(args[1], out _)) {
+                    await message.ReplyAsync("user id must be ulong");
+                }
+                else if (args.Length < 3) {
+                    await message.ReplyAsync("no type specified");
+                }
+                else if (!message.Author.SkillIssued()) {
+                    if (Enum.TryParse<CtqaType>(args[2], out CtqaType type)) {
+                        UserConfig.SetCustomCtqaStatic(ulong.Parse(args[1]), type);
+                        await message.ReplyAsync("Success!!1113" + string.Concat(Enumerable.Range(0, 20).Select(_ => (char)RandInt(45, 65))));
+                    }
+                    else {
+                        await message.ReplyAsync($"Can't parse {args[2]} to CtqaType enum");
+                    }
+                }
+            }
+            if (args[0] == "ctqa!tractor") {
+                await message.AddReactionAsync(Emoji.Parse("🚜"));
             }
         }
         catch (Exception ex) {
@@ -204,8 +251,8 @@ OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ 
 internal static class Data {
     public static Random random = new();
     public static DateTime StartTime = DateTime.MinValue;
-    public static readonly string CtqaChannelsPath = GetFilePath(["ctqa channels.antigrav"], "[]");
-    public static readonly string CtqasPath = GetFilePath(["ctqas.antigrav"], "{}");
+    public static readonly string CtqaChannelsPath = GetFilePath(["ctqa channels.antigrav"], "null");
+    public static readonly string CtqasPath = GetFilePath(["ctqas.antigrav"], "null");
     public static readonly string ImagesPath = "D:\\CtqaBto\\src";
     public static readonly ulong[] TrustedPeople = [
         558979299177136164,   // tema5002
@@ -233,7 +280,7 @@ internal static class Data {
         "simon says say h",
         "cellua",
         "#minecraftphysics",
-        "download tema app for unlimited slinx attic invite",
+        "download rech2020 games for FREE",
         "CtqaLink",
         "29A:AA79//@A>@4-->.4>"
     ];
@@ -309,8 +356,21 @@ internal class CommandModule : InteractionModuleBase {
     [SlashCommand("achs", "see your achievements")]
     public async Task AchsSlashCommand() => await RespondAsync(
         embed: new EmbedBuilder() { Title = "Your achievements:", Description = GetAchsCountStatic(Context.Guild.Id, Context.User.Id) }.Build(),
-        components: MakeComponents([new Button("View achievements", $"SENDACHS;{Context.User.Id:x4}")])
+        components: MakeComponents([new Button("View achievements", $"SENDACHS;{Context.User.Id}")])
     );
+
+    [SlashCommand("lb", "see leaderboards for this server")]
+    public async Task LeaderboardsSlashCommand() => await RespondAsync(
+        embed: GetLeaderboardsEmbed(Context.Guild, LeaderboardsType.Ctqas),
+        components: GetLeaderboardsComponents(LeaderboardsType.Ctqas)
+    );
+
+    [SlashCommand("nerdmode", "🤓🤓🤓🤓🤓🤓")]
+    public async Task NerdmodeSlashCommand(IUser user) {
+        if (user.SkillIssued()) await RespondAsync("i dont think you are allowed to use this", ephemeral: true);
+        else if (ServerConfig.UpdateBlacklistStatic(Context.Guild.Id, user.Id)) await RespondAsync($"**{user.FullName()}** was nerdmoded, Fs in chat");
+        else await RespondAsync($"**{user.FullName()}** was removed from nerdmode");
+    }
 
     [SlashCommand("info", "get info about bot")]
     public async Task InfoSlashCommand() => await RespondAsync(embed: new EmbedBuilder() {
@@ -325,4 +385,76 @@ if they randomly stopped spawning try running /setup again
 thanks to:
 - **{Program.client.GetUser(986132157967761408).FullName()}** for syating ctqa image and making ctqa icons"
     }.Build());
+
+    [SlashCommand("ctqas", "get list of ctqa spawn chances")]
+    public async Task CtqasSlashCommand() => await RespondAsync(
+        $"ctqa chances: ```\n" + string.Join('\n', TypeDict.Select(kvp => $"{kvp.Key,-15}{(float)kvp.Value / TotalWeight * 100:F4}%")) +
+        "```\ncustom ctqas:```\n" + string.Join(", ", CustomTypes) + "\n```"
+    );
+    [SlashCommand("coupon", "use coupon")]
+    public async Task CouponSlashCommand(string coupon) {
+        if (ServerConfig.TryUseCouponStatic(Context.Guild.Id, coupon, out Coupon? couponNullable)) {
+            Coupon coupon1 = (Coupon)couponNullable!;
+            Inventory.RecieveCoupon(Context.Guild.Id, Context.User.Id, coupon1);
+            await RespondAsync($"you used coupon for {coupon1.Amount} {coupon1.Name} ctqas!!!1");
+        }
+        else await RespondAsync("unknown coupon", ephemeral: true);
+    }
+
+    [SlashCommand("gift", "give ctqas pls")]
+    public async Task GiftSlashCommand(IUser user, [Autocomplete(typeof(CtqasAutocomplete))]string type, long amount) {
+        if (user.Id == Context.User.Id) {
+            await RespondAsync("uhhhhh", ephemeral: true);
+            return;
+        }
+        if (amount < 1) {
+            await RespondAsync("nooouuuuu 😛😛😛😛", ephemeral: true);
+        }
+        if (TryGetType(type, out var ctqaTypeNullable)) {
+            CtqaType ctqaType = (CtqaType)ctqaTypeNullable!;
+            using (var inv = Inventory.Load(Context.Guild.Id, Context.User.Id)) {
+                if (!inv.HasAmount(ctqaType, amount)) {
+                    await RespondAsync($"you dont have that many {type} ctqas\n(you have only {inv[ctqaType]} and wanted to donate {amount})");
+                    inv.DisposeIt = false;
+                    return;
+                }
+                inv.DecrementCtqa(ctqaType);
+                await inv.GiveAchAsync(Context.Channel, Context.User, AchievementId.Donator);
+            }
+            using var reciever = Inventory.Load(Context.Guild.Id, user.Id);
+            reciever.DecrementCtqa(ctqaType);
+            await reciever.GiveAchAsync(Context.Channel, user, AchievementId.AntiDonator);
+            await RespondAsync($"{Context.User.Mention} gave {user.Mention} {amount} {type} ctqas!!!!!!!");
+        }
+        else {
+            await RespondAsync($"ctqa type {type} doesn't exist");
+        }
+    }
+
+    [SlashCommand("teapot", "get info about teapot")]
+    public async Task TeapotSlashCommand() {
+        var brewer = GetBrewer(Context.Guild.Id);
+        await RespondAsync(embed: brewer.Info(Context.Guild), components: brewer.InfoComponents());
+    }
+
+    [SlashCommand("brew", "Brew a coffee")]
+    public async Task BrewSlashCommand(string coffee_type = "ъ", int milk = 0, int sugar = 0) {
+        HttpStatusCode code = GetBrewer(Context.Guild.Id).TryToBrewCoffee(Context.User.Id, coffee_type, milk, sugar);
+        await RespondAsync(code.Description());
+        using var inv = Inventory.Load(Context.Guild.Id, Context.User.Id);
+        inv.DisposeIt = false;
+        if (code == HttpStatusCode.ImATeapot) {
+            await inv.GiveAchAsync(Context.Channel, Context.User, AchievementId.IAmATeapot);
+            inv.DisposeIt = true;
+        }
+        if (inv.AddStatusCode(code)) {
+            await inv.GiveAchAsync(Context.Channel, Context.User, AchievementId.GetAllStatusCodes);
+            inv.DisposeIt = true;
+        }
+    }
+}
+
+public class CtqasAutocomplete : AutocompleteHandler {
+#pragma warning disable CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
+    public override async Task<AutocompletionResult> GenerateSuggestionsAsync(IInteractionContext context, IAutocompleteInteraction autocompleteInteraction, IParameterInfo parameter, IServiceProvider services) => AutocompletionResult.FromSuccess(CtqaTypes.Select(x => new AutocompleteResult(x.Name(), x.Name())).Take(25));
 }

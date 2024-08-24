@@ -21,10 +21,12 @@ public static class Achievements {
         Worship = 10,
         Holy = 11,
         Trolled = 12,
-        IAmATeapot = 418,
         NotQuite = 13,
         CTQA = 14,
         NOTCTQA = 15,
+        // Unfair
+        IAmATeapot = 18,
+        GetAllStatusCodes = 19,
         // Hidden
         Datamine = 16,
         Сейф = 17
@@ -58,10 +60,11 @@ public static class Achievements {
         new Achievement(AchievementId.Worship, AchievementCategory.Random,            "Ctqa Worshiper",                            "Have both 🛐 and <:syating_ctqa:1178288745435385896> in your message", "worship ctqa only"),
         new Achievement(AchievementId.Holy, AchievementCategory.Random,               "Holy ctqa",                                 "Run /holy", "holy"),
         new Achievement(AchievementId.Trolled, AchievementCategory.Random,            "trolled",                                   "actually idfk", "LMAO GOT TROLLED SO FUNNY LMAO 😂😂😂"),
-        new Achievement(AchievementId.IAmATeapot, AchievementCategory.Random,         "Brew coffee",                               "Run /brew", "418"),
         new Achievement(AchievementId.NotQuite, AchievementCategory.Random,           "Not Quite",                                 "Say \"cat\" in channel where ctqa is sitting already", "wrong bot"),
         new Achievement(AchievementId.CTQA, AchievementCategory.Random,               "Calm Down!",                                "Say \"CTQA\"", "???"),
         new Achievement(AchievementId.NOTCTQA, AchievementCategory.Random,            "new JTextComponent();",                     "Say uppercased what you wanted to catch", "now this gets interesting"),
+        new Achievement(AchievementId.IAmATeapot, AchievementCategory.Unfair,         "Brew coffee",                               "Get 418 status code in /brew", "418"),
+        new Achievement(AchievementId.GetAllStatusCodes, AchievementCategory.Unfair,  "Teapot Troubleshooter",                               "Get 418 status code in /brew", "418"),
         new Achievement(AchievementId.Datamine, AchievementCategory.Secret,           "It's a mystery to nobody.",                $"say `{Data.Datamine}`", "bushes hid the description 😔😔😂😂", "bushes hid the description 😔😔😂😂"),
         new Achievement(AchievementId.Сейф, AchievementCategory.Secret,               "сейф 🔐🛡️🦈🦈😂 и не знаешь где 😼😼😼", "Say сейф", "???", "Ф цшдв ашту сейф рфы фззуфкув!")
     ];
@@ -87,7 +90,7 @@ public static class Achievements {
         AchievementCategory.CtqaHunt => "Ctqa Hunt",
         _ => category.ToString()
     };
-    private static IEnumerable<Achievement> GetAchs(AchievementCategory category, List<AchievementId> achievements) => Achs.Where(x => (category != AchievementCategory.Secret && x.Category == category) || (x.Category == AchievementCategory.Secret && achievements.Contains(x.Id)));
+    private static IEnumerable<Achievement> GetAchs(AchievementCategory category, List<AchievementId> achievements) => Achs.Where(x => (category != AchievementCategory.Secret && x.Category == category) || (x.Category == AchievementCategory.Secret && x.Category == category && achievements.Contains(x.Id)));
     public static MessageComponent GetAchComponents(AchievementCategory category) => MakeComponents(Enum.GetValues<AchievementCategory>().Select(e => new Button(category == e ? "Refresh" : e.Name(), $"UPDATEACHS;{(int)e}", category == e ? ButtonStyle.Success : ButtonStyle.Primary)));
     public static Embed GetAchEmbed(ulong guildId, ulong memberId, AchievementCategory category) {
         var inv = Inventory.Load(guildId, memberId);
