@@ -41,7 +41,10 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
     private static string GetInventoryPath(ulong guildId, ulong memberId) => GetFilePath(["ctqas", guildId.ToString(), $"{memberId}.antigrav"], "null");
     public long this[CtqaType type] {
         get => Ctqas.TryGetValue(type, out long value) ? value : 0;
-        private set => Ctqas[type] = value;
+        private set {
+            Ctqas[type] = value;
+            if (value == 0) Ctqas.Remove(type);
+        }
     }
     public bool HasAch(AchievementId id) => Achievements.Contains(id);
     public void UpdateCatchTime(double time) {
@@ -54,6 +57,10 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
         using var inv = Load(guildId, memberId);
         inv[coupon.Type] += coupon.Amount;
     }
+    public static void GiftCtqas(Inventory from, Inventory to, CtqaType type, long amount) {
+        from[type] -= amount;
+        to[type] += amount;
+    } 
     public bool AddStatusCode(HttpStatusCode code) {
         if (StatusCodes == null) return false;
         if (!StatusCodes.Contains(code)) StatusCodes.Add(code);

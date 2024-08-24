@@ -235,6 +235,11 @@ OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ 
             if (args[0] == "ctqa!tractor") {
                 await message.AddReactionAsync(Emoji.Parse("🚜"));
             }
+            if (message.Content.StartsWith("ctqa!news") && Data.TrustedPeople.Contains(message.Author.Id)) {
+                foreach (Tuple<ulong, ulong> tuple in new List<Tuple<ulong, ulong>>() { new(1178285875608698951, 1178289455954677760)}.Concat(GetCtqasChannels())) {
+                    await ((IMessageChannel)client.GetChannel(tuple.Item2)).SendMessageAsync(message.Content[10..]);
+                }
+            }
         }
         catch (Exception ex) {
             await message.ReplyAsync($"гавно в шкиле\n```\n{ex}\n```");
@@ -402,7 +407,7 @@ thanks to:
     }
 
     [SlashCommand("gift", "give ctqas pls")]
-    public async Task GiftSlashCommand(IUser user, [Autocomplete(typeof(CtqasAutocomplete))]string type, long amount) {
+    public async Task GiftSlashCommand(IUser user, [Autocomplete(typeof(CtqasAutocomplete))]string type, long amount = 1) {
         if (user.Id == Context.User.Id) {
             await RespondAsync("uhhhhh", ephemeral: true);
             return;
@@ -420,10 +425,11 @@ thanks to:
                 }
                 inv.DecrementCtqa(ctqaType);
                 await inv.GiveAchAsync(Context.Channel, Context.User, AchievementId.Donator);
+                using (var reciever = Inventory.Load(Context.Guild.Id, user.Id)) {
+                    Inventory.GiftCtqas(inv, reciever, ctqaType, amount);
+                    await reciever.GiveAchAsync(Context.Channel, user, AchievementId.AntiDonator);
+                }
             }
-            using var reciever = Inventory.Load(Context.Guild.Id, user.Id);
-            reciever.DecrementCtqa(ctqaType);
-            await reciever.GiveAchAsync(Context.Channel, user, AchievementId.AntiDonator);
             await RespondAsync($"{Context.User.Mention} gave {user.Mention} {amount} {type} ctqas!!!!!!!");
         }
         else {
@@ -451,6 +457,12 @@ thanks to:
             await inv.GiveAchAsync(Context.Channel, Context.User, AchievementId.GetAllStatusCodes);
             inv.DisposeIt = true;
         }
+    }
+
+    [SlashCommand("holy", "HOLY CTQA")]
+    public async Task HolySlashCommand() {
+        await RespondWithFileAsync(GetImage("holy_ctqa.jpg"));
+        await Inventory.GiveAchAsyncStatic(Context.Channel, Context.Guild.Id, Context.User, AchievementId.Holy);
     }
 }
 

@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Antigrav" Version="1.8.1" />
+		<PackageReference Include="Antigrav" Version="1.9.0" />
 		<PackageReference Include="Discord.Net" Version="3.15.3" />
 	</ItemGroup>
 
