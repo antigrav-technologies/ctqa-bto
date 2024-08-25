@@ -425,10 +425,10 @@ thanks to:
                 }
                 inv.DecrementCtqa(ctqaType);
                 await inv.GiveAchAsync(Context.Channel, Context.User, AchievementId.Donator);
-                using (var reciever = Inventory.Load(Context.Guild.Id, user.Id)) {
-                    Inventory.GiftCtqas(inv, reciever, ctqaType, amount);
-                    await reciever.GiveAchAsync(Context.Channel, user, AchievementId.AntiDonator);
-                }
+
+                using var reciever = Inventory.Load(Context.Guild.Id, user.Id);
+                Inventory.GiftCtqas(inv, reciever, ctqaType, amount);
+                await reciever.GiveAchAsync(Context.Channel, user, AchievementId.AntiDonator);
             }
             await RespondAsync($"{Context.User.Mention} gave {user.Mention} {amount} {type} ctqas!!!!!!!");
         }

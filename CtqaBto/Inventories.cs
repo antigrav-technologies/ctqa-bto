@@ -23,11 +23,11 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
     [AntigravSerializable("achs")]
     public List<AchievementId> Achievements { get; private set; } = [];
 
-    [AntigravSerializable("fastest_catch", float.PositiveInfinity)]
-    public double FastestCatch { get; private set; } = float.PositiveInfinity;
+    [AntigravSerializable("fastest_catch", double.PositiveInfinity)]
+    public double FastestCatch { get; private set; } = double.PositiveInfinity;
 
-    [AntigravSerializable("slowest_catch", float.NegativeInfinity)]
-    public double SlowestCatch { get; private set; } = float.NegativeInfinity;
+    [AntigravSerializable("slowest_catch", double.NegativeInfinity)]
+    public double SlowestCatch { get; private set; } = double.NegativeInfinity;
 
     [AntigravSerializable("status_codes")]
     public List<HttpStatusCode>? StatusCodes { get; private set; } = [];
@@ -80,12 +80,14 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
     }
     public bool HasAmount(CtqaType type, long amount) => this[type] >= amount;
     public static Inventory Load(ulong guildId, ulong memberId) {
+        Console.WriteLine($"getting inventory {guildId}-{memberId}");
         var inv = LoadFromFile<Inventory>(GetInventoryPath(guildId, memberId)) ?? new Inventory();
+        Console.WriteLine($"readed inventory {guildId}-{memberId}");
         inv.GuildId = guildId;
         inv.MemberId = memberId;
         return inv;
     }
-    public void Save() => DumpToFile(this, GetInventoryPath(GuildId, MemberId));
+    public void Save() => DumpToFile(this, GetInventoryPath(GuildId, MemberId), sortKeys: true, indent: 2);
     public void Dispose() {
         if (DisposeIt) Save();
         GC.SuppressFinalize(this);
