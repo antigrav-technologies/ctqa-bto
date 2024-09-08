@@ -381,15 +381,17 @@ internal class CommandModule : InteractionModuleBase {
     public async Task InfoSlashCommand() => await RespondAsync(embed: new EmbedBuilder() {
         Title = $"ctqa bto",
         Description = $@"[support server](https://discord.gg/QnXad4qY4U) | [source code](https://github.com/tema5002/ctqa-bto)
-{GetVersion()}
 
-i dont really know what to say here
-run /setup to make ctqas spawn in channel
+A cat bot clone
+Spawns ctqas, and probably actually does that
+Run /setup to make spawn loop
 if they randomly stopped spawning try running /setup again
 
 thanks to:
 - **{Program.client.GetUser(986132157967761408).FullName()}** for syating ctqa image and making ctqa icons"
-    }.Build());
+    }.Build()
+        Footer = new() { Text = GetVersion() }
+    );
 
     [SlashCommand("ctqas", "get list of ctqa spawn chances")]
     public async Task CtqasSlashCommand() => await RespondAsync(
