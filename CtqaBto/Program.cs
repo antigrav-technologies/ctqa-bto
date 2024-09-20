@@ -282,9 +282,18 @@ internal static class Data {
         "#minecraftphysics",
         "download rech2020 games for FREE",
         "CtqaLink",
-        "29A:AA79//@A>@4-->.4>"
+        "29A:AA79//@A>@4-->.4>",
+        "🌶️ копуста 🥐 🥧 🥧 перчик 🤯 🤯 перчик 🥧 перчик 🌶️ 🥐 🥐 🤯 🥐 пирчик копуста 🤯 киписти перчик киписти киписти копуста копуста копуста 🥐 копуста перчик 🌶️ копуста 🥧 пирчик перчик копуста копуста киписти перчик киписти копуста перчик 🥐 🥧 перчик пирчик перчик 🌶️ 🤯 🥧 🤯 🤯 🥧 киписти копуста киписти 🤯 пирчик 🥧 🤯 копуста перчик 🌶️ копуста киписти копуста 🤯 пирчик 🥐 пирчик перчик перчик пирчик пирчик перчик 🥧 🌶️ 🌶️ 🥧 🥧 копуста 🌶️ пирчик пирчик 🥧 киписти 🥧 киписти 🌶️ 🌶️ 🥐 киписти 🌶️ пирчик 🤯 🌶️ киписти пирчик 🥐 киписти 🌶️",
+        "untitled goose game 😔🎯",
+    "icosAHERONOOOOOOOOOOOOOOOO.ICOSAHEDROOOOOOOOOOOOOOOOD.S..ICIOCDHAOIDNEFP2O43[32[3PVMFDOVPFDMVNNM",
+        "why did mister breasts go to new zealand? because of electric caterpillars! get it? because i am kreisi",
+        "Me when i see the kreisi bruglar making oickles,: 😁😁😁📥🍔🍔😑🦣🦣😆😭🕷️🪞🥒🥐🥒🥒📚🦑",
+        "balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁",
+        "kreisi burglar alarm clock ⌚  ⏰",
+        "*kreisi music plays*",
+        "#TeamPicardias for life"
     ];
-    public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
+    public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙"Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
     public static readonly string TrophyUnlocked = "<:ctqa_trophy:1200918336444309524>";
     public static readonly string TrophyLocked = "<:no_ctqa_trophy:1200918339938156554>";
 }
@@ -376,15 +385,17 @@ internal class CommandModule : InteractionModuleBase {
     public async Task InfoSlashCommand() => await RespondAsync(embed: new EmbedBuilder() {
         Title = $"ctqa bto",
         Description = $@"[support server](https://discord.gg/QnXad4qY4U) | [source code](https://github.com/tema5002/ctqa-bto)
-{GetVersion()}
 
-i dont really know what to say here
-run /setup to make ctqas spawn in channel
+A cat bot clone
+Spawns ctqas, and probably actually does that
+Run /setup to make spawn loop
 if they randomly stopped spawning try running /setup again
 
 thanks to:
 - **{Program.client.GetUser(986132157967761408).FullName()}** for syating ctqa image and making ctqa icons"
-    }.Build());
+    }.Build()
+        Footer = new() { Text = GetVersion() }
+    );
 
     [SlashCommand("ctqas", "get list of ctqa spawn chances")]
     public async Task CtqasSlashCommand() => await RespondAsync(
