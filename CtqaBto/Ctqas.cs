@@ -133,30 +133,42 @@ public static class Ctqas {
     }
     public static async Task<Task> SpawnCtqaLoopAsync() {
         List<Tuple<ulong, ulong>> channels = GetCtqasChannels();
-        foreach (Tuple<ulong, ulong> tuple in channels) {
+        for (int i = channels.Count - 1; i >= 0; i--) {
+            Tuple<ulong, ulong> tuple = channels[i];
             SocketGuild? guild = Program.client.GetGuild(tuple.Item1);
             if (guild != null) {
                 SocketGuildChannel? channel = guild.GetChannel(tuple.Item2);
                 if (channel != null) {
-                    await ((IMessageChannel)channel).SendMessageAsync(Choice(Data.StartText));
+                    try {
+                        await ((IMessageChannel)channel).SendMessageAsync(Choice(Data.StartText));
+                    }
+                    catch (Discord.Net.HttpException ex) when (ex.HttpCode == System.Net.HttpStatusCode.Forbidden) {
+                        channels.RemoveAt(i);
+                    } 
                 }
-                else channels.Remove(tuple);
+                else channels.RemoveAt(i);
             }
-            else channels.Remove(tuple);
+            else channels.RemoveAt(i);
         }
         SetCtqasChannels(channels);
         while (true) {
             channels = GetCtqasChannels();
-            foreach (Tuple<ulong, ulong> tuple in channels) {
+            for (int i = channels.Count - 1; i >= 0; i--) {
+                Tuple<ulong, ulong> tuple = channels[i];
                 SocketGuild? guild = Program.client.GetGuild(tuple.Item1);
                 if (guild != null) {
                     SocketGuildChannel? channel = guild.GetChannel(tuple.Item2);
                     if (channel != null) {
-                        await SpawnCtqaAsync((IMessageChannel)channel);
+                        try {
+                            await SpawnCtqaAsync((IMessageChannel)channel);
+                        }
+                        catch (Discord.Net.HttpException ex) when (ex.HttpCode == System.Net.HttpStatusCode.Forbidden) {
+                            channels.RemoveAt(i);
+                        }
                     }
-                    else channels.Remove(tuple);
+                    else channels.RemoveAt(i);
                 }
-                else channels.Remove(tuple);
+                else channels.RemoveAt(i);
             }
             SetCtqasChannels(channels);
             await Task.Delay(RandRange(2 * 1000 * 60, 20 * 1000 * 60));

@@ -105,144 +105,139 @@ internal class Program {
     }
 
     private async Task<Task> Client_MessageReceived(SocketMessage message) {
-        try {
-            if (message.Channel is SocketDMChannel) {
-                await message.Channel.SendMessageAsync("good job! use ctqa!lol_i_have_dmed_ctqa_and_got_an_ach");
-                return Task.CompletedTask;
-            }
-            var ctqasSpawnData = GetCtqasSpawnData();
-            SpawnMessageData? spawnMessageData = null;
-            string sayToCatch = "ctqa";
-            if (ctqasSpawnData.TryGetValue(message.Channel.Id, out var value)) spawnMessageData = value;
-            if (spawnMessageData != null) sayToCatch = ((SpawnMessageData)spawnMessageData).SayToCatch;
-            string msg = message.Content;
-            string msgl = msg.ToLower();
-            if (message.MentionedUsers.Any(x => x.Id == client.CurrentUser.Id)) {
-                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.PingBot);
-            }
-            if (msg == "полимерная глина в шкиле 🦈 и тысяча рублей за 48 сообщений в теме на солнце ☀️ бесплатно и смерть 💀 и не только у 😎") {
-                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Unknown);
-            }
+        if (message.Channel is SocketDMChannel) {
+            await message.Channel.SendMessageAsync("good job! use ctqa!lol_i_have_dmed_ctqa_and_got_an_ach");
+            return Task.CompletedTask;
+        }
+        var ctqasSpawnData = GetCtqasSpawnData();
+        SpawnMessageData? spawnMessageData = null;
+        string sayToCatch = "ctqa";
+        if (ctqasSpawnData.TryGetValue(message.Channel.Id, out var value)) spawnMessageData = value;
+        if (spawnMessageData != null) sayToCatch = ((SpawnMessageData)spawnMessageData).SayToCatch;
+        string msg = message.Content;
+        string msgl = msg.ToLower();
+        if (message.MentionedUsers.Any(x => x.Id == client.CurrentUser.Id)) {
+            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.PingBot);
+        }
+        if (msg == "полимерная глина в шкиле 🦈 и тысяча рублей за 48 сообщений в теме на солнце ☀️ бесплатно и смерть 💀 и не только у 😎") {
+            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Unknown);
+        }
 #pragma warning disable CA1862 // Используйте перегрузки метода "StringComparison" для сравнения строк без учета регистра
-            if (sayToCatch == msg.ToUpper()) { // ТЫ ТУПОЙ БЛЯ
-                if (sayToCatch == "ctqa") {
-                    await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.CTQA);
-                }
-                else {
-                    await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.NOTCTQA);
-                }
+        if (sayToCatch == msg.ToUpper()) { // ТЫ ТУПОЙ БЛЯ
+            if (sayToCatch == "ctqa") {
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.CTQA);
             }
-
-            if (spawnMessageData != null && msgl == "cat") {
-                await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));
+            else {
+                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.NOTCTQA);
             }
-            if (msg.Equals(sayToCatch, StringComparison.CurrentCultureIgnoreCase)) {
-                if (spawnMessageData != null && ServerConfig.IsWhitelistedStatic(message.GuildId(), message.Author)) {
-                    ctqasSpawnData.Remove(message.Channel.Id);
-                    SetCtqasSpawnData(ctqasSpawnData);
-                    IMessage? ctqaMessage = await message.Channel.GetMessageAsync(((SpawnMessageData)spawnMessageData).MessageId);
-                    double time = Math.Abs(Math.Round((message.CreatedAt - ctqaMessage.CreatedAt).TotalSeconds, 2));
-                    CtqaType type = ((SpawnMessageData)spawnMessageData).Type;
+        }
 
-                    long amount;
-                    using (var inv = Inventory.Load(message.GuildId(), message.Author.Id)) {
-                        await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.FirstCtqa);
-                        inv.UpdateCatchTime(time);
-                        if (inv.FastestCatch < 5) {
-                            await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.FastCatcher);
-                        }
-                        if (inv.SlowestCatch > 1) {
-                            await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.SlowCatcher);
-                        }
-                        amount = inv.IncrementCtqa(type);
+        if (spawnMessageData != null && msgl == "cat") {
+            await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));
+        }
+        if (msg.Equals(sayToCatch, StringComparison.CurrentCultureIgnoreCase)) {
+            if (spawnMessageData != null && ServerConfig.IsWhitelistedStatic(message.GuildId(), message.Author)) {
+                ctqasSpawnData.Remove(message.Channel.Id);
+                SetCtqasSpawnData(ctqasSpawnData);
+                IMessage? ctqaMessage = await message.Channel.GetMessageAsync(((SpawnMessageData)spawnMessageData).MessageId);
+                double time = Math.Abs(Math.Round((message.CreatedAt - ctqaMessage.CreatedAt).TotalSeconds, 2));
+                CtqaType type = ((SpawnMessageData)spawnMessageData).Type;
+
+                long amount;
+                using (var inv = Inventory.Load(message.GuildId(), message.Author.Id)) {
+                    await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.FirstCtqa);
+                    inv.UpdateCatchTime(time);
+                    if (inv.FastestCatch < 5) {
+                        await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.FastCatcher);
                     }
-                    try {
-                        await ctqaMessage.DeleteAsync();
-                        await message.DeleteAsync();
+                    if (inv.SlowestCatch > 1) {
+                        await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.SlowCatcher);
                     }
-                    catch (Exception ex) {
-                        await ((IMessageChannel)message).SendMessageAsync($"failed to delete ctqa spawn or \"ctqa\" message\n```\n{ex.Message}\n```");
-                    }
-                    string emoji = type.Emoji();
-                    await message.Channel.SendMessageAsync(@$"{message.Author} COUGHT... {type.Name()} CTQA!!!!1! {emoji}{emoji}{emoji} (100% REAL NOT CLICKBAIT)
+                    amount = inv.IncrementCtqa(type);
+                }
+                try {
+                    await ctqaMessage.DeleteAsync();
+                    await message.DeleteAsync();
+                }
+                catch (Exception ex) {
+                    await ((IMessageChannel)message).SendMessageAsync($"failed to delete ctqa spawn or \"ctqa\" message\n```\n{ex.Message}\n```");
+                }
+                string emoji = type.Emoji();
+                await message.Channel.SendMessageAsync(@$"{message.Author} COUGHT... {type.Name()} CTQA!!!!1! {emoji}{emoji}{emoji} (100% REAL NOT CLICKBAIT)
 bro now has {amount} ctqas of dat type ‼️😱🔥
 OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ HOW! ? 1 ? 1 ? 1!1!1 ? 1");
+            }
+            else {
+                await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));
+            }
+        }
+
+        if (msg == Data.Datamine) {
+            await message.DeleteAsync();
+            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Datamine);
+        }
+
+        if (msgl == "сейф") {
+            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Сейф);
+        }
+
+        if (msgl == "please do the ctqa") {
+            await message.ReplyFileAsync(GetImage("socialcredit.png"));
+            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.PleaseDoTheCtqa);
+        }
+
+        if (msgl == "please do not the ctqa") {
+            await message.ReplyAsync($"ok then\n{message.Author.Mention} lost one fine ctqa!!!!11");
+            using var inv = Inventory.Load(message.GuildId(), message.Author.Id);
+            inv.DecrementCtqa(CtqaType.Fine);
+            await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.PleaseDoNotTheCtqa);
+        }
+                
+        if (msgl.Contains(":syating_ctqa:") && msgl.Contains("🛐")) {
+            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Worship);
+        }
+            
+        if ("ctqa!lol_i_have_dmed_ctqa_and_got_an_ach" == msg) {
+            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.DMBot);
+        }
+        string[] args = message.Content.Split();
+        if (args[0] == "ctqa!whitelist") {
+            if (args.Length < 2) {
+                await message.ReplyAsync("no id specified");
+            }
+            else if (!message.Author.SkillIssued()) {
+                ulong id = ulong.Parse(args[1]);
+                if (ServerConfig.UpdateWhitelistStatic(message.GuildId(), id)) await message.ReplyAsync($"**{GetName(id)}** was whitelisted");
+                else await message.ReplyAsync($"**{GetName(id)}** was removed from whitelist");
+            }
+        }
+        if (args[0] == "ctqa!custom") {
+            if (args.Length < 2) {
+                await message.ReplyAsync("no user specified");
+            }
+            else if (!ulong.TryParse(args[1], out _)) {
+                await message.ReplyAsync("user id must be ulong");
+            }
+            else if (args.Length < 3) {
+                await message.ReplyAsync("no type specified");
+            }
+            else if (!message.Author.SkillIssued()) {
+                if (Enum.TryParse<CtqaType>(args[2], out CtqaType type)) {
+                    UserConfig.SetCustomCtqaStatic(ulong.Parse(args[1]), type);
+                    await message.ReplyAsync("Success!!1113" + string.Concat(Enumerable.Range(0, 20).Select(_ => (char)RandInt(45, 65))));
                 }
                 else {
-                    await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));
-                }
-            }
-
-            if (msg == Data.Datamine) {
-                await message.DeleteAsync();
-                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Datamine);
-            }
-
-            if (msgl == "сейф") {
-                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Сейф);
-            }
-
-            if (msgl == "please do the ctqa") {
-                await message.ReplyFileAsync(GetImage("socialcredit.png"));
-                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.PleaseDoTheCtqa);
-            }
-
-            if (msgl == "please do not the ctqa") {
-                await message.ReplyAsync($"ok then\n{message.Author.Mention} lost one fine ctqa!!!!11");
-                using var inv = Inventory.Load(message.GuildId(), message.Author.Id);
-                inv.DecrementCtqa(CtqaType.Fine);
-                await inv.GiveAchAsync(message.Channel, message.Author, AchievementId.PleaseDoNotTheCtqa);
-            }
-                
-            if (msgl.Contains(":syating_ctqa:") && msgl.Contains("🛐")) {
-                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.Worship);
-            }
-            
-            if ("ctqa!lol_i_have_dmed_ctqa_and_got_an_ach" == msg) {
-                await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.DMBot);
-            }
-            string[] args = message.Content.Split();
-            if (args[0] == "ctqa!whitelist") {
-                if (args.Length < 2) {
-                    await message.ReplyAsync("no id specified");
-                }
-                else if (!message.Author.SkillIssued()) {
-                    ulong id = ulong.Parse(args[1]);
-                    if (ServerConfig.UpdateWhitelistStatic(message.GuildId(), id)) await message.ReplyAsync($"**{GetName(id)}** was whitelisted");
-                    else await message.ReplyAsync($"**{GetName(id)}** was removed from whitelist");
-                }
-            }
-            if (args[0] == "ctqa!custom") {
-                if (args.Length < 2) {
-                    await message.ReplyAsync("no user specified");
-                }
-                else if (!ulong.TryParse(args[1], out _)) {
-                    await message.ReplyAsync("user id must be ulong");
-                }
-                else if (args.Length < 3) {
-                    await message.ReplyAsync("no type specified");
-                }
-                else if (!message.Author.SkillIssued()) {
-                    if (Enum.TryParse<CtqaType>(args[2], out CtqaType type)) {
-                        UserConfig.SetCustomCtqaStatic(ulong.Parse(args[1]), type);
-                        await message.ReplyAsync("Success!!1113" + string.Concat(Enumerable.Range(0, 20).Select(_ => (char)RandInt(45, 65))));
-                    }
-                    else {
-                        await message.ReplyAsync($"Can't parse {args[2]} to CtqaType enum");
-                    }
-                }
-            }
-            if (args[0] == "ctqa!tractor") {
-                await message.AddReactionAsync(Emoji.Parse("🚜"));
-            }
-            if (message.Content.StartsWith("ctqa!news") && Data.TrustedPeople.Contains(message.Author.Id)) {
-                foreach (Tuple<ulong, ulong> tuple in new List<Tuple<ulong, ulong>>() { new(1178285875608698951, 1178289455954677760)}.Concat(GetCtqasChannels())) {
-                    await ((IMessageChannel)client.GetChannel(tuple.Item2)).SendMessageAsync(message.Content[10..]);
+                    await message.ReplyAsync($"Can't parse {args[2]} to CtqaType enum");
                 }
             }
         }
-        catch (Exception ex) {
-            await message.ReplyAsync($"гавно в шкиле\n```\n{ex}\n```");
+        if (args[0] == "ctqa!tractor") {
+            await message.AddReactionAsync(Emoji.Parse("🚜"));
+        }
+        if (message.Content.StartsWith("ctqa!news") && Data.TrustedPeople.Contains(message.Author.Id)) {
+            foreach (Tuple<ulong, ulong> tuple in new List<Tuple<ulong, ulong>>() { new(1178285875608698951, 1178289455954677760)}.Concat(GetCtqasChannels())) {
+                await ((IMessageChannel)client.GetChannel(tuple.Item2)).SendMessageAsync(message.Content[10..]);
+            }
         }
         return Task.CompletedTask;
     }
