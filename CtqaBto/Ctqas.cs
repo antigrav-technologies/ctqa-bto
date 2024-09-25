@@ -179,6 +179,7 @@ public static class Ctqas {
         CtqaType.Reverse => "reverse_ctqa.webp",
         CtqaType.Professor => "syating_professor_ctqa.webp",
         CtqaType.Baby => "baby_ctqa.webp",
+        CtqaType.Tema5002 => "tema5002_ctqa.webp",
         _ => "syating_ctqa.webp"
     });
 }
