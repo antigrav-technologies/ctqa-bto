@@ -163,9 +163,8 @@ internal class Program {
                     await ((IMessageChannel)message).SendMessageAsync($"failed to delete ctqa spawn or \"ctqa\" message\n```\n{ex.Message}\n```");
                 }
                 string emoji = type.Emoji();
-                await message.Channel.SendMessageAsync(@$"{message.Author} COUGHT... {type.Name()} CTQA!!!!1! {emoji}{emoji}{emoji} (100% REAL NOT CLICKBAIT)
-bro now has {amount} ctqas of dat type ‼️😱🔥
-OMG OMG IT WAS COUGHT IN {FormatTime(time)} ??? 1 ? 1 ? 1!1! ⁉️⁉️⁉️ HOW! ? 1 ? 1 ? 1!1!1 ? 1");
+                await message.Channel.SendMessageAsync($"{message.Author.Mention} caught a {emoji} **{type.Name()} Ctqa** in **{FormatTime(time)}**!\n" +
+                                                       $"You now have **{amount} {type.Name()} Ctqas** in your inventory");
             }
             else {
                 await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));

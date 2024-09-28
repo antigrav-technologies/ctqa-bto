@@ -124,7 +124,7 @@ public static class Ctqas {
         if (!data.ContainsKey(channel.Id)) {
             CtqaType type = RandomCtqaType();
             string emoji = type.Emoji();
-            var message = await channel.SendFileAsync(GetCtqaImage(type), $"NO FUCJING WAY A {type.Name()} CTQA APPEARED HERE IT IS TYPE \"ctqa\" AND YOU WILL CATCH IT ↪️↪️↪️➡️➡️➡️➡️↪️➡️ {emoji}‼️‼️");
+            var message = await channel.SendFileAsync(GetCtqaImage(type), $"A wild {emoji} **{type.Name()} Ctqa** just appeared! Type \"ctqa\" to catch it!");
             data[channel.Id] = new(type, message.Id);
             SetCtqasSpawnData(data);
             return true;
