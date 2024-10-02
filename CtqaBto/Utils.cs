@@ -100,7 +100,7 @@ public static class Utils {
     public static string FullName(this IUser user) => user.Username + (user.DiscriminatorValue == 0 ? "" : $"#{user.Discriminator}");
 
     public static string GetEmoji(string name) {
-        GuildEmote? e = Program.client.GetGuild(1178285875608698951).Emotes.FirstOrDefault(e => e.Name == name);
+        GuildEmote? e = Program.client.GetGuild(1287684990041063445).Emotes.FirstOrDefault(e => e.Name == name);
         return e == null ? "emoji fail" : e.ToString();
     }
 

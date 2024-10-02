@@ -99,7 +99,7 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
         if (custom != null) inv.IncrementCtqa((CtqaType)custom);
         return new EmbedBuilder() {
             Title = self ? "Your ctqas" : $"{member.FullName()}'s ctqas",
-            Description = inv.Ctqas.Count == 0 ? "you have no ctqas go and cry about it <:pointlaugh:1178287922756194394>" : $"{(self ? "You" : "The")}r fastest catch is: {(double.IsFinite(inv.FastestCatch) ? (inv.FastestCatch + "s") : "never")}\n{(self ? "You" : "The")}r slowest catch is: {(double.IsFinite(inv.SlowestCatch) ? (inv.SlowestCatch + "h") : "never")}",
+            Description = inv.Ctqas.Count == 0 ? "you have no ctqas go and cry about it <:pointlaugh:1178287922756194394>" : $"{(self ? "You" : "Thei")}r fastest catch is: {(double.IsFinite(inv.FastestCatch) ? (inv.FastestCatch + "s") : "never")}\n{(self ? "You" : "Thei")}r slowest catch is: {(double.IsFinite(inv.SlowestCatch) ? (inv.SlowestCatch + "h") : "never")}",
             Fields = inv.Ctqas.Select(c => new EmbedFieldBuilder() { Name = $"{c.Key.Emoji()} {c.Key.Name()}", Value = c.Value.ToString(), IsInline = true }).ToList(),
             Footer = new() { Text = $"Total ctqas: {inv.TotalCtqas - (custom == null ? 0 : 1)}" }
         }.Build();

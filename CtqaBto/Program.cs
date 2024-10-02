@@ -234,7 +234,7 @@ internal class Program {
             await message.AddReactionAsync(Emoji.Parse("🚜"));
         }
         if (message.Content.StartsWith("ctqa!news") && Data.TrustedPeople.Contains(message.Author.Id)) {
-            foreach (Tuple<ulong, ulong> tuple in new List<Tuple<ulong, ulong>>() { new(1178285875608698951, 1178289455954677760)}.Concat(GetCtqasChannels())) {
+            foreach (Tuple<ulong, ulong> tuple in new List<Tuple<ulong, ulong>>() { new(1287684990041063445, 1291064242040078538) }.Concat(GetCtqasChannels())) {
                 await ((IMessageChannel)client.GetChannel(tuple.Item2)).SendMessageAsync(message.Content[10..]);
             }
         }
