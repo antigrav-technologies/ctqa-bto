@@ -313,7 +313,17 @@ internal static class Data {
         "я робот долбаёб",
         "пшеничная каша в голове 😞 и не только в понедельник с дедушкой морозом 🎅",
         "сниф щит 🛡️ джампскейр 😱",
-        "https://media.discordapp.net/attachments/1042064947867287646/1199047070116495470/image.png"
+        "https://media.discordapp.net/attachments/1042064947867287646/1199047070116495470/image.png",
+        "https://media.discordapp.net/attachments/1042064947867287646/1198242355392811088/image.png",
+        "https://github.com/tema5002/ammeter/commit/1eeeb3ed1839fd41fbb5cbd2f219466b6932245f",
+        "https://media.discordapp.net/attachments/1042064947867287646/1198242415685947513/image.png",
+        "https://media.discordapp.net/attachments/1042064947867287646/1198258848738316370/image.png",
+        "📴♦️📵📵📵📵📵📵📵effafiigiiaiigigigiaapgoggiapggpaogogigoggogoggG?G  :DDDD",
+        "inase:insae::sanine:insan::isnane:insnae:insanias:infainfainfainfa:isane:<:insane:1136262312366440582>",
+        "https://media.discordapp.net/attachments/1042064947867287646/1198274980320911440/image.png",
+        "©️©️cocoopyright",
+        "https://media.discordapp.net/attachments/1042064947867287646/1198276452689391717/image.png",
+        "⬅️<:typing:1133071627370897580>🛡️🧱⚔️<:typing:1133071627370897580>➡️↪️❌♻️"
     ];
     public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
     public static readonly string TrophyUnlocked = "<:ctqa_trophy:1200918336444309524>";
