@@ -290,7 +290,30 @@ internal static class Data {
         "balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁balls to the store 🏪😁",
         "kreisi burglar alarm clock ⌚  ⏰",
         "*kreisi music plays*",
-        "#TeamPicardias for life"
+        "#TeamPicardias for life",
+        "how to pull a proglet out of a hat",
+        "OKG FREE BOBUX REAL??!???🐂😎😎😎😎😎😝😝😝😝😝😱😱😱😱",
+        "https://media.discordapp.net/attachments/1042064947867287646/1173531283725504512/attachment.png",
+        "ъ",
+        "context 😨😂🤣😦😮🙀less",
+        "```cs\nthrow new ArgumentException(\"sniffshit hump 🐪🐫\");\n```",
+        "transgender carbohydrates",
+        "А КТО ТОКИЕ ФИКСЕКЕ 🤔🤔🤔 БАЛШОЙ БОЛШОЙ СЕКРЕТ ㊙️",
+        "By the way did you know that i use the GNU/Linux distribution for x86-64 processor architecture known as Arch Linux?",
+        "я не знаю как здорово и огород и огород и огород 😼 не могу подключить и смерть в раю и огород и не только от вас 🐋🤩🐋",
+        "https://media.discordapp.net/attachments/810858829767639081/1078004234055847946/chrome_4euY54brJE.png",
+        "helo my name is abomtin and i chacked CloroxBle.. wait what",
+        "https://media.discordapp.net/attachments/1205124620227846186/1236360856246419476/remix-ff6d164f-3c98-4a1c-b231-c794fae51259.png",
+        "https://media.discordapp.net/attachments/1205124620227846186/1224361212142161931/Octogrow.gif",
+        "😾🐵🐅👀🧶🎱🀄🧪🗿📐🍘🍑🌵💢🕳️🅰️❌❗☢️☣️⚠️♻",
+        "Знакомьтесь с клавиатурой Gboard! Здесь будет сохраняться текст, который вы копируете.",
+        "обсидиван 🛋️ тайм ⌛",
+        "asexual but does for the rtx 4090 graphics for the internet 🛜😁😁",
+        "foo52 техношаман 🧙",
+        "я робот долбаёб",
+        "пшеничная каша в голове 😞 и не только в понедельник с дедушкой морозом 🎅",
+        "сниф щит 🛡️ джампскейр 😱",
+        "https://media.discordapp.net/attachments/1042064947867287646/1199047070116495470/image.png"
     ];
     public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
     public static readonly string TrophyUnlocked = "<:ctqa_trophy:1200918336444309524>";
