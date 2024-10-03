@@ -133,7 +133,7 @@ internal class Program {
         }
 
         if (spawnMessageData != null && msgl == "cat") {
-            await message.AddReactionAsync(Emote.Parse("<:pointlaugh:1178287922756194394>"));
+            await message.AddReactionAsync(GetEmoji("pointlaugh"));
         }
         if (msg.Equals(sayToCatch, StringComparison.CurrentCultureIgnoreCase)) {
             if (spawnMessageData != null && ServerConfig.IsWhitelistedStatic(message.GuildId(), message.Author)) {

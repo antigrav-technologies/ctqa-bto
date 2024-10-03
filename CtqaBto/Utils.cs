@@ -99,8 +99,10 @@ public static class Utils {
 
     public static string FullName(this IUser user) => user.Username + (user.DiscriminatorValue == 0 ? "" : $"#{user.Discriminator}");
 
-    public static string GetEmoji(string name) {
-        GuildEmote? e = Program.client.GetGuild(1287684990041063445).Emotes.FirstOrDefault(e => e.Name == name);
+    public static GuildEmote? GetEmoji(string name) => Program.client.GetGuild(1287684990041063445).Emotes.FirstOrDefault(e => e.Name == name);
+
+    public static string GetEmojiString(string name) {
+        GuildEmote? e = GetEmoji(name);
         return e == null ? "emoji fail" : e.ToString();
     }
 

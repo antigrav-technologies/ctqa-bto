@@ -118,7 +118,7 @@ public static class Ctqas {
         type = null;
         return false;
     } 
-    public static string Emoji(this CtqaType type) => GetEmoji(type.Name().ToLower() + "ctqa");
+    public static string Emoji(this CtqaType type) => GetEmojiString(type.Name().ToLower() + "ctqa");
     public static async Task<bool> SpawnCtqaAsync(IMessageChannel channel) {
         var data = GetCtqasSpawnData();
         if (!data.ContainsKey(channel.Id)) {
