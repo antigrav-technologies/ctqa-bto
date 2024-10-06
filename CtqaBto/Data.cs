@@ -5,6 +5,7 @@ namespace CtqaBto;
 internal static class Data {
     public static Random random = new();
     public static DateTime StartTime = DateTime.MinValue;
+    public static readonly string InventoriesData = GetFolderPath(["ctqas"]);
     public static readonly string CtqaChannelsPath = GetFilePath(["ctqa channels.antigrav"], "null");
     public static readonly string CtqasPath = GetFilePath(["ctqas.antigrav"], "null");
     public static readonly string ImagesPath = "D:\\CtqaBto\\src";

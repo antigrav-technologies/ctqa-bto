@@ -38,7 +38,7 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
     public ulong MemberId;
     public bool DisposeIt { private get; set; } = true;
 
-    private static string GetInventoryPath(ulong guildId, ulong memberId) => GetFilePath(["ctqas", guildId.ToString(), $"{memberId}.antigrav"], "null");
+    private static string GetInventoryPath(ulong guildId, ulong memberId) => GetFilePath([Data.InventoriesData, guildId.ToString(), $"{memberId}.antigrav"], "null");
     public long this[CtqaType type] {
         get => Ctqas.TryGetValue(type, out long value) ? value : 0;
         private set {
