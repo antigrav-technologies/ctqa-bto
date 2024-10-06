@@ -1,7 +1,7 @@
 ﻿using static CtqaBto.Ctqas;
 using static CtqaBto.Utils;
 using static CtqaBto.Achievements;
-using static Antigrav.Main;
+using Antigrav;
 using Discord;
 using Discord.WebSocket;
 using static CtqaBto.Configs;
@@ -81,13 +81,13 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
     public bool HasAmount(CtqaType type, long amount) => this[type] >= amount;
     public static Inventory Load(ulong guildId, ulong memberId) {
         Console.WriteLine($"getting inventory {guildId}-{memberId}");
-        var inv = LoadFromFile<Inventory>(GetInventoryPath(guildId, memberId)) ?? new Inventory();
+        var inv = AntigravConvert.LoadFromFile<Inventory>(GetInventoryPath(guildId, memberId)) ?? new Inventory();
         Console.WriteLine($"readed inventory {guildId}-{memberId}");
         inv.GuildId = guildId;
         inv.MemberId = memberId;
         return inv;
     }
-    public void Save() => DumpToFile(this, GetInventoryPath(GuildId, MemberId), sortKeys: true, indent: 2);
+    public void Save() => AntigravConvert.DumpToFile(this, GetInventoryPath(GuildId, MemberId), sortKeys: true, indent: 2);
     public void Dispose() {
         if (DisposeIt) Save();
         GC.SuppressFinalize(this);

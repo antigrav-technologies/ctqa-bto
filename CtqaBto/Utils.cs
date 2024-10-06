@@ -1,6 +1,6 @@
-﻿using Discord;
+﻿using Antigrav;
+using Discord;
 using Discord.WebSocket;
-using static Antigrav.Main;
 
 namespace CtqaBto;
 // random utils here
@@ -83,13 +83,13 @@ public static class Utils {
 
     public static string GetName(ulong id) => Program.client.GetUser(id) == null ? "unknown" : Program.client.GetUser(id).FullName();
 
-    public static List<Tuple<ulong, ulong>> GetCtqasChannels() => LoadFromFile<List<Tuple<ulong, ulong>>>(Data.CtqaChannelsPath) ?? [];
+    public static List<Tuple<ulong, ulong>> GetCtqasChannels() => AntigravConvert.LoadFromFile<List<Tuple<ulong, ulong>>>(Data.CtqaChannelsPath) ?? [];
 
-    public static void SetCtqasChannels(List<Tuple<ulong, ulong>> channels) => DumpToFile(channels, Data.CtqaChannelsPath);
+    public static void SetCtqasChannels(List<Tuple<ulong, ulong>> channels) => AntigravConvert.DumpToFile(channels, Data.CtqaChannelsPath);
 
-    public static Dictionary<ulong, SpawnMessageData> GetCtqasSpawnData() => LoadFromFile<Dictionary<ulong, SpawnMessageData>>(Data.CtqasPath) ?? [];
+    public static Dictionary<ulong, SpawnMessageData> GetCtqasSpawnData() => AntigravConvert.LoadFromFile<Dictionary<ulong, SpawnMessageData>>(Data.CtqasPath) ?? [];
 
-    public static void SetCtqasSpawnData(Dictionary<ulong, SpawnMessageData> data) => DumpToFile(data, Data.CtqasPath);
+    public static void SetCtqasSpawnData(Dictionary<ulong, SpawnMessageData> data) => AntigravConvert.DumpToFile(data, Data.CtqasPath);
 
     public static string GetURL(this IGuildChannel channel) => $"https://discord.com/channels/{channel.Guild.Id}/{channel.Id}";
 
