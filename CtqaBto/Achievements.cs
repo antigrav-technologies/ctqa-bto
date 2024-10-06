@@ -97,7 +97,7 @@ public static class Achievements {
         return new EmbedBuilder() {
             Title = "Your achievements",
             Description = $"Achievements unlocked: {GetAchsCount(inv.Achievements)}",
-            Fields = GetAchs(category, inv.Achievements).Select(ach => new EmbedFieldBuilder() { Name = $"{(inv.Achievements.Contains(ach.Id) ? Data.TrophyUnlocked : Data.TrophyLocked)} {ach.Name}", Value = inv.Achievements.Contains(ach.Id) ? ach.Description : ach.DescriptionIfNotUnlocked, IsInline = true }).ToList()
+            Fields = GetAchs(category, inv.Achievements).Select(ach => new EmbedFieldBuilder() { Name = $"{GetEmojiString(inv.Achievements.Contains(ach.Id) ? "ctqa_trophy" : "no_ctqa_trophy")} {ach.Name}", Value = inv.Achievements.Contains(ach.Id) ? ach.Description : ach.DescriptionIfNotUnlocked, IsInline = true }).ToList()
         }.Build();
     }
 }
