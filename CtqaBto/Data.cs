@@ -90,7 +90,7 @@ internal static class Data {
         "kurzgesagt bird 🐔🕊️🐔🐔🕊️🕊️🕊️🕊️🐦😎"
         "асексуальный с арбузным холодильником 🤠"
         "REPOST THIS MESSAGE IF YOU HATE RIVER OPTIC CABLE 🚠🚡🚡📄💬😠😾😡😞😭🙄😑😐",
-        "Brought You Here By The Letter G"
+        "Brought You Here By The Letter G",
         "polyhedra geometry dash lua discord bot abotmin russia programming",
         "my name is john discord and i invented discord 🦣"
     ];
