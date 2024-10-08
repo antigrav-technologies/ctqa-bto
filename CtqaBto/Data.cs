@@ -79,7 +79,20 @@ internal static class Data {
         "https://media.discordapp.net/attachments/1042064947867287646/1198274980320911440/image.png",
         "©️©️cocoopyright",
         "https://media.discordapp.net/attachments/1042064947867287646/1198276452689391717/image.png",
-        "⬅️<:typing:1133071627370897580>🛡️🧱⚔️<:typing:1133071627370897580>➡️↪️❌♻️"
+        "⬅️<:typing:1133071627370897580>🛡️🧱⚔️<:typing:1133071627370897580>➡️↪️❌♻️",
+        "https://media.discordapp.net/attachments/1100477068787077140/1292935882613067857/Screenshot_20241007-224506.png",
+        "sanity and my mind is full of the most informative and equilateral triangle basement is a wuggy games 🎯💯😎😄🎧😊⭐🪥",
+        "ctqa inverted triangle 📐▶️ Attach a debugger to make a server using the most informative video 📷📸😃😉😁",
+        "gboard is a wuggy games 🎯💯😎😄🎧😊⭐🪥🍹🥘🎉🥮🍿🍪🍭🍮🍯🍡‼️✔️",
+        "УГЛЕВОДОРОДЫ ВПЕРЁД ♿♿♿♿♿♿♿♿",
+        "БАТАРЕЙКИ БАТАРЕЙКИ\nБАТАРЕЙКИ БАТАРЕЙКИ\nБАТАРЕЙКИ БАТАРЕЙКИ\nБАТАРЕЙКИ БАТАРЕЙКИ",
+        "KURWA 🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱",
+        "kurzgesagt bird 🐔🕊️🐔🐔🕊️🕊️🕊️🕊️🐦😎"
+        "асексуальный с арбузным холодильником 🤠"
+        "REPOST THIS MESSAGE IF YOU HATE RIVER OPTIC CABLE 🚠🚡🚡📄💬😠😾😡😞😭🙄😑😐",
+        "Brought You Here By The Letter G"
+        "polyhedra geometry dash lua discord bot abotmin russia programming",
+        "my name is john discord and i invented discord 🦣"
     ];
     public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
 }
