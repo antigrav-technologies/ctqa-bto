@@ -87,8 +87,8 @@ internal static class Data {
         "УГЛЕВОДОРОДЫ ВПЕРЁД ♿♿♿♿♿♿♿♿",
         "БАТАРЕЙКИ БАТАРЕЙКИ\nБАТАРЕЙКИ БАТАРЕЙКИ\nБАТАРЕЙКИ БАТАРЕЙКИ\nБАТАРЕЙКИ БАТАРЕЙКИ",
         "KURWA 🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱🇵🇱",
-        "kurzgesagt bird 🐔🕊️🐔🐔🕊️🕊️🕊️🕊️🐦😎"
-        "асексуальный с арбузным холодильником 🤠"
+        "kurzgesagt bird 🐔🕊️🐔🐔🕊️🕊️🕊️🕊️🐦😎",
+        "асексуальный с арбузным холодильником 🤠",
         "REPOST THIS MESSAGE IF YOU HATE RIVER OPTIC CABLE 🚠🚡🚡📄💬😠😾😡😞😭🙄😑😐",
         "Brought You Here By The Letter G",
         "polyhedra geometry dash lua discord bot abotmin russia programming",
