@@ -95,7 +95,8 @@ internal static class Data {
         "my name is john discord and i invented discord 🦣",
         "майонез_dl forever",
         "scheel computer 🦈💻😜",
-        "vote bird for president"
+        "vote bird for president",
+        "```cs\nfinally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally\n```"
     ];
     public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
 }
