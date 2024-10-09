@@ -1,5 +1,5 @@
 ﻿using Discord;
-using static Antigrav.Main;
+using Antigrav;
 using static CtqaBto.Ctqas;
 using static CtqaBto.Utils;
 
@@ -75,12 +75,12 @@ public static class Configs {
         private static string GetServerConfigPath(ulong guildId) => GetFilePath(["server configs", $"{guildId}.antigrav"], "null");
 
         public static ServerConfig Load(ulong guildId) {
-            var config = LoadFromFile<ServerConfig>(GetServerConfigPath(guildId)) ?? new ServerConfig();
+            var config = AntigravConvert.LoadFromFile<ServerConfig>(GetServerConfigPath(guildId)) ?? new ServerConfig();
             config.GuildId = guildId;
             return config;
         }
 
-        public void Save() => DumpToFile(this, GetServerConfigPath(GuildId));
+        public void Save() => AntigravConvert.DumpToFile(this, GetServerConfigPath(GuildId));
 
         public void Dispose() {
             if (DisposeIt) Save();
@@ -97,7 +97,7 @@ public static class Configs {
         private static string GetUserConfigPath(ulong userId) => GetFilePath(["user configs", $"{userId}.antigrav"], "null");
 
         public static UserConfig Load(ulong userId) {
-            var config = LoadFromFile<UserConfig>(GetUserConfigPath(userId)) ?? new UserConfig();
+            var config = AntigravConvert.LoadFromFile<UserConfig>(GetUserConfigPath(userId)) ?? new UserConfig();
             config.UserId = userId;
             return config;
         }
@@ -109,7 +109,7 @@ public static class Configs {
             config.CustomCtqa = type;
         }
 
-        public void Save() => DumpToFile(this, GetUserConfigPath(UserId));
+        public void Save() => AntigravConvert.DumpToFile(this, GetUserConfigPath(UserId));
 
         public void Dispose() {
             Save();
