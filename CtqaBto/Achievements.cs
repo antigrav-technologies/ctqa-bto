@@ -70,7 +70,7 @@ public static class Achievements {
     ];
     public static readonly int TotalNotSecretAchs = Achs.Where(x => x.Category != AchievementCategory.Secret).Count();
     public static Embed MakeAchEmbed(AchievementId id, string username) => new EmbedBuilder() {
-        Title = "<:ctqa_trophy:1200918336444309524> New achievement!",
+        Title = $"{GetEmojiString("ctqa_trophy")} New achievement!",
         Fields = [new() { Name = GetAch(id).Name, Value = GetAch(id).DescrptionWhenGot }],
         Footer = new() { Text = $"Unlocked by @{username}" }
     }.Build();
