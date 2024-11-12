@@ -135,7 +135,7 @@ public static class Ctqas {
         List<Tuple<ulong, ulong>> channels = GetCtqasChannels();
         for (int i = channels.Count - 1; i >= 0; i--) {
             Tuple<ulong, ulong> tuple = channels[i];
-            SocketGuild? guild = Program.client.GetGuild(tuple.Item1);
+            SocketGuild? guild = Program.Client.GetGuild(tuple.Item1);
             if (guild != null) {
                 SocketGuildChannel? channel = guild.GetChannel(tuple.Item2);
                 if (channel != null) {
@@ -155,7 +155,7 @@ public static class Ctqas {
             channels = GetCtqasChannels();
             for (int i = channels.Count - 1; i >= 0; i--) {
                 Tuple<ulong, ulong> tuple = channels[i];
-                SocketGuild? guild = Program.client.GetGuild(tuple.Item1);
+                SocketGuild? guild = Program.Client.GetGuild(tuple.Item1);
                 if (guild != null) {
                     SocketGuildChannel? channel = guild.GetChannel(tuple.Item2);
                     if (channel != null) {

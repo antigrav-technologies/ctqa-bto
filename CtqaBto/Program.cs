@@ -14,40 +14,40 @@ using кансоль = System.Console;
 namespace CtqaBto;
 
 internal class Program {
-    readonly static string token = File.ReadAllText("TOKEN.txt");
-    public readonly static DiscordSocketClient client = new(new DiscordSocketConfig() {
+    private static readonly string Token = File.ReadAllText("TOKEN.txt");
+    public static readonly DiscordSocketClient Client = new(new DiscordSocketConfig() {
         GatewayIntents = GatewayIntents.All,
         UseInteractionSnowflakeDate = false
     });
-    readonly InteractionService interactionService = new(client.Rest);
+    private readonly InteractionService _interactionService = new(Client.Rest);
 
-    static Task Main() => new Program().MainAsync();
+    public static Task Main() => new Program().MainAsync();
     // bot setup is done here
-    async Task MainAsync() {
-        await interactionService.AddModuleAsync<CommandModule>(null);
-        client.Log += Log;
-        client.Ready += Ready;
-        client.SlashCommandExecuted += SlashCommandExecuted;
-        client.SelectMenuExecuted += Client_SelectMenuExecuted;
-        client.MessageReceived += Client_MessageReceived;
-        client.ButtonExecuted += InteractionExecuted;
-        interactionService.Log += Log;
-        await client.LoginAsync(TokenType.Bot, token);
-        await client.StartAsync();
+    private async Task MainAsync() {
+        await _interactionService.AddModuleAsync<CommandModule>(null);
+        Client.Log += Log;
+        Client.Ready += Ready;
+        Client.SlashCommandExecuted += SlashCommandExecuted;
+        Client.SelectMenuExecuted += Client_SelectMenuExecuted;
+        Client.MessageReceived += Client_MessageReceived;
+        Client.ButtonExecuted += InteractionExecuted;
+        _interactionService.Log += Log;
+        await Client.LoginAsync(TokenType.Bot, Token);
+        await Client.StartAsync();
         await Task.Delay(-1);
     }
 
     private async Task<Task> Client_SelectMenuExecuted(SocketMessageComponent cmd) {
-        await interactionService.ExecuteCommandAsync(new InteractionContext(client, cmd, cmd.Channel), null);
+        await _interactionService.ExecuteCommandAsync(new InteractionContext(Client, cmd, cmd.Channel), null);
         return Task.CompletedTask;
     }
 
     private async Task<Task> SlashCommandExecuted(SocketSlashCommand cmd) {
-        await interactionService.ExecuteCommandAsync(new InteractionContext(client, cmd, cmd.Channel), null);
+        await _interactionService.ExecuteCommandAsync(new InteractionContext(Client, cmd, cmd.Channel), null);
         return Task.CompletedTask;
     }
 
-    private async Task<Task> InteractionExecuted(SocketMessageComponent component) {
+    private static async Task<Task> InteractionExecuted(SocketMessageComponent component) {
         ulong guildId = (ulong)component.GuildId!;
         string h = component.Data.CustomId;
         string[] t = h.Split(";");
@@ -97,8 +97,8 @@ internal class Program {
     }
 
     private async Task<Task> Ready() {
-        кансоль.WriteLine($"@{client.CurrentUser} is now ready");
-        await interactionService.RegisterCommandsGloballyAsync();
+        кансоль.WriteLine($"@{Client.CurrentUser} is now ready");
+        await _interactionService.RegisterCommandsGloballyAsync();
         Data.StartTime = DateTime.Now;
         await SpawnCtqaLoopAsync();
         return Task.CompletedTask;
@@ -116,7 +116,7 @@ internal class Program {
         if (spawnMessageData != null) sayToCatch = ((SpawnMessageData)spawnMessageData).SayToCatch;
         string msg = message.Content;
         string msgl = msg.ToLower();
-        if (message.MentionedUsers.Any(x => x.Id == client.CurrentUser.Id)) {
+        if (message.MentionedUsers.Any(x => x.Id == Client.CurrentUser.Id)) {
             await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.PingBot);
         }
         if (msg == "полимерная глина в шкиле 🦈 и тысяча рублей за 48 сообщений в теме на солнце ☀️ бесплатно и смерть 💀 и не только у 😎") {
@@ -197,7 +197,7 @@ internal class Program {
         }
             
         if ("ctqa!lol_i_have_dmed_ctqa_and_got_an_ach" == msg) {
-            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.DMBot);
+            await Inventory.GiveAchAsyncStatic(message.Channel, message.GuildId(), message.Author, AchievementId.DmBot);
         }
         string[] args = message.Content.Split();
         if (args[0] == "ctqa!whitelist") {
@@ -221,7 +221,7 @@ internal class Program {
                 await message.ReplyAsync("no type specified");
             }
             else if (!message.Author.SkillIssued()) {
-                if (Enum.TryParse<CtqaType>(args[2], out CtqaType type)) {
+                if (Enum.TryParse(args[2], out CtqaType type)) {
                     UserConfig.SetCustomCtqaStatic(ulong.Parse(args[1]), type);
                     await message.ReplyAsync("Success!!1113" + string.Concat(Enumerable.Range(0, 20).Select(_ => (char)RandInt(45, 65))));
                 }
@@ -235,13 +235,13 @@ internal class Program {
         }
         if (message.Content.StartsWith("ctqa!news") && Data.TrustedPeople.Contains(message.Author.Id)) {
             foreach (Tuple<ulong, ulong> tuple in new List<Tuple<ulong, ulong>>() { new(1287684990041063445, 1291064242040078538) }.Concat(GetCtqasChannels())) {
-                await ((IMessageChannel)client.GetChannel(tuple.Item2)).SendMessageAsync(message.Content[10..]);
+                await ((IMessageChannel)Client.GetChannel(tuple.Item2)).SendMessageAsync(message.Content[10..]);
             }
         }
         return Task.CompletedTask;
     }
 
-    private Task Log(LogMessage msg) {
+    private static Task Log(LogMessage msg) {
         кансоль.WriteLine(msg);
         return Task.CompletedTask;
     }
@@ -252,17 +252,18 @@ internal class CommandModule : InteractionModuleBase {
     [SlashCommand("ping", "get ping")]
     public async Task Ping() {
         int h = ((DiscordSocketClient)Context.Client).Latency;
-        string message = $"ctqa has bran delayt of {h}ms <:syating_ctqa:1178288745435385896>";
-        if      (h >= 10000) message = $"ctqa  iahbr an d<:syating_ctqa:1178288745435385896>lsy o{h} fmsae";
-        else if (h >= 8000)  message = $"ci a<:syating_ctqa:1178288745435385896>has bratqmdelay o n{h}  sf";
-        else if (h >= 5000)  message = $"cn a <:syating_ctqa:1178288745435385896>at br isadel yaofq{h}ms h";
-        else if (h >= 3000)  message = $"htqa cysrb fan delai oa {h}ms <:syating_ctqa:1178288745435385896>";
-        else if (h >= 2000)  message = $"cdqa{h}hastbrain  e  ylof  msa<:syating_ctqa:1178288745435385896>";
-        else if (h >= 1500)  message = $"ct a<:syating_ctqa:1178288745435385896>ahsqbrain delay of {h} s m";
-        else if (h >= 1000)  message = $"ctsbohas arain delay  f {h}mq <:syating_ctqa:1178288745435385896>";
-        else if (h >= 500)   message = $"ctqa<:syating_ctqa:1178288745435385896>has brain delay of {h}ms";
-        else if (h >= 300)   message = $"ctqa hasnbrai  delay of {h}ms <:syating_ctqa:1178288745435385896>";
-        await RespondAsync(message);
+        await RespondAsync(h switch {
+            >= 10000 => $"ctqa  iahbr an d<:syating_ctqa:1178288745435385896>lsy o{h} fmsae",
+            >= 8000 => $"ci a<:syating_ctqa:1178288745435385896>has bratqmdelay o n{h}  sf",
+            >= 5000 => $"cn a <:syating_ctqa:1178288745435385896>at br isadel yaofq{h}ms h",
+            >= 3000 => $"htqa cysrb fan delai oa {h}ms <:syating_ctqa:1178288745435385896>",
+            >= 2000 => $"cdqa{h}hastbrain  e  ylof  msa<:syating_ctqa:1178288745435385896>",
+            >= 1500 => $"ct a<:syating_ctqa:1178288745435385896>ahsqbrain delay of {h} s m",
+            >= 1000 => $"ctsbohas arain delay  f {h}mq <:syating_ctqa:1178288745435385896>",
+            >= 500 => $"ctqa<:syating_ctqa:1178288745435385896>has brain delay of {h}ms",
+            >= 300 => $"ctqa hasnbrai  delay of {h}ms <:syating_ctqa:1178288745435385896>",
+            _ => $"ctqa has bran delayt of {h}ms <:syating_ctqa:1178288745435385896>"
+        });
     }
 
     [SlashCommand("setup", "make bot spawn ctqas here (ADMIN ONLY)")]
@@ -296,7 +297,7 @@ internal class CommandModule : InteractionModuleBase {
                 SetCtqasChannels(channels);
                 return;
             }
-            await RespondAsync($"there is already a ctqa spawn loop in {channel.GetURL()}");
+            await RespondAsync($"there is already a ctqa spawn loop in {channel.GetUrl()}");
             return;
         }
         channels.Add(tuple);
@@ -341,8 +342,8 @@ Run /setup to make spawn loop
 If they randomly stopped spawning try running /setup again
 
 thanks to:
-- **{Program.client.GetUser(986132157967761408).FullName()}** for syating ctqa image and making ctqa icons
-- **{Program.client.GetUser(802846743049404426).FullName()}** for hosting ctqa bto",
+- **{Program.Client.GetUser(986132157967761408).FullName()}** for syating ctqa image and making ctqa icons
+- **{Program.Client.GetUser(802846743049404426).FullName()}** for hosting ctqa bto",
         Footer = new() { Text = GetVersion() }
     }.Build()
     );
@@ -392,13 +393,13 @@ thanks to:
             await RespondAsync($"ctqa type {type} doesn't exist");
         }
     }
-
+    /*
     [SlashCommand("teapot", "get info about teapot")]
     public async Task TeapotSlashCommand() {
         var brewer = GetBrewer(Context.Guild.Id);
         await RespondAsync(embed: brewer.Info(Context.Guild), components: brewer.InfoComponents());
     }
-
+    
     [SlashCommand("brew", "Brew a coffee")]
     public async Task BrewSlashCommand(string coffee_type = "ъ", int milk = 0, int sugar = 0) {
         HttpStatusCode code = GetBrewer(Context.Guild.Id).TryToBrewCoffee(Context.User.Id, coffee_type, milk, sugar);
@@ -409,11 +410,7 @@ thanks to:
             await inv.GiveAchAsync(Context.Channel, Context.User, AchievementId.IAmATeapot);
             inv.DisposeIt = true;
         }
-        if (inv.AddStatusCode(code)) {
-            await inv.GiveAchAsync(Context.Channel, Context.User, AchievementId.GetAllStatusCodes);
-            inv.DisposeIt = true;
-        }
-    }
+    }*/
 
     [SlashCommand("holy", "HOLY CTQA")]
     public async Task HolySlashCommand() {

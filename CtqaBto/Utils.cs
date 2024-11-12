@@ -1,4 +1,5 @@
-﻿using Antigrav;
+﻿using System.Text;
+using Antigrav;
 using Discord;
 using Discord.WebSocket;
 
@@ -16,25 +17,25 @@ public static class Utils {
     public static string FormatTime(double time) {
         int days = (int)(time / 86400);
         int hours = (int)(time / 3600) % 24;
-        int mins = (int)(time / 60) % 60;
+        int minutes = (int)(time / 60) % 60;
         double secs = time % 60;
         return (days == 0 ? "" : $"{days} days ") +
                (hours == 0 ? "" : $"{hours} hours ") +
-               (mins == 0 ? "" : $"{mins} minutes ") +
+               (minutes == 0 ? "" : $"{minutes} minutes ") +
                (secs == 0 ? "" : $"{Math.Round(secs, 2)} seconds");
     }
 
     public static int RandInt(int start, int end) {
-        lock (Data.random) {
-            return Data.random.Next(start, end);
+        lock (Data.Random) {
+            return Data.Random.Next(start, end);
         }
     }
 
-    public static int RandInt(int end) => RandInt(0, end);
+    private static int RandInt(int end) => RandInt(0, end);
 
     public static int RandRange(int start, int end) {
-        lock (Data.random) {
-            return Data.random.Next(start, end + 1);
+        lock (Data.Random) {
+            return Data.Random.Next(start, end + 1);
         }
     }
 
@@ -44,22 +45,25 @@ public static class Utils {
 
     public static T Choice<T>(IEnumerable<T> enumerable) => enumerable.ElementAt(RandInt(enumerable.Count()));
 
-    public static char RandomUppercaseAscii() => Choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+    private static char RandomUppercaseAscii() => Choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
 
-    public static string RandomUppercaseAsciis(int length) => string.Join("", Enumerable.Range(0, length).Select(static x => RandomUppercaseAscii()));
+    private static string RandomUppercaseAsciis(int length) {
+        StringBuilder builder = new(length);
+        for (int i = 0; i < length; i++) builder.Append(RandomUppercaseAscii());
+        return builder.ToString();
+    }
 
     public static string GetFolderPath(IEnumerable<string> args) {
         string folder = "";
 
         foreach (string f in args) {
             folder = Path.Combine(folder, f);
-            if (!Directory.Exists(folder)) {
-                try {
-                    Directory.CreateDirectory(folder);
-                }
-                catch (IOException ex) {
-                    throw new IOException($"Failed to create folders: {ex.Message}", ex);
-                }
+            if (Directory.Exists(folder)) continue;
+            try {
+                Directory.CreateDirectory(folder);
+            }
+            catch (IOException ex) {
+                throw new IOException($"Failed to create folders: {ex.Message}", ex);
             }
         }
 
@@ -81,7 +85,7 @@ public static class Utils {
 
     public static string GetImage(string name) => Path.Combine(Data.ImagesPath, name);
 
-    public static string GetName(ulong id) => Program.client.GetUser(id) == null ? "unknown" : Program.client.GetUser(id).FullName();
+    public static string GetName(ulong id) => Program.Client.GetUser(id) == null ? "unknown" : Program.Client.GetUser(id).FullName();
 
     public static List<Tuple<ulong, ulong>> GetCtqasChannels() => AntigravConvert.LoadFromFile<List<Tuple<ulong, ulong>>>(Data.CtqaChannelsPath) ?? [];
 
@@ -91,7 +95,7 @@ public static class Utils {
 
     public static void SetCtqasSpawnData(Dictionary<ulong, SpawnMessageData> data) => AntigravConvert.DumpToFile(data, Data.CtqasPath);
 
-    public static string GetURL(this IGuildChannel channel) => $"https://discord.com/channels/{channel.Guild.Id}/{channel.Id}";
+    public static string GetUrl(this IGuildChannel channel) => $"https://discord.com/channels/{channel.Guild.Id}/{channel.Id}";
 
     public static IGuild Guild(this SocketMessageComponent component) => ((IGuildChannel)component.Channel).Guild;
 
@@ -99,18 +103,18 @@ public static class Utils {
 
     public static string FullName(this IUser user) => user.Username + (user.DiscriminatorValue == 0 ? "" : $"#{user.Discriminator}");
 
-    public static GuildEmote? GetEmoji(string name) => Program.client.GetGuild(1287684990041063445).Emotes.FirstOrDefault(e => e.Name == name);
+    public static GuildEmote? GetEmoji(string name) => Program.Client.GetGuild(1287684990041063445).Emotes.FirstOrDefault(e => e.Name == name);
 
     public static string GetEmojiString(string name) {
         GuildEmote? e = GetEmoji(name);
         return e == null ? "emoji fail" : e.ToString();
     }
 
-    public static bool SkillIssued(this IUser user) => !(Data.TrustedPeople.Contains(user.Id) || (user is IGuildUser guildUser && guildUser.GuildPermissions.Administrator));
+    public static bool SkillIssued(this IUser user) => !(Data.TrustedPeople.Contains(user.Id) || user is IGuildUser { GuildPermissions.Administrator: true });
 
-    public static async Task<IUserMessage> ReplyAsync(this IMessage msg, string? text = null, bool isTTS = false, Embed? embed = null, RequestOptions? options = null, AllowedMentions? allowedMentions = null, MessageComponent? components = null, ISticker[]? stickers = null, Embed[]? embeds = null, MessageFlags flags = MessageFlags.None, PollProperties? poll = null) => await msg.Channel.SendMessageAsync(text, isTTS, embed, options, allowedMentions, new MessageReference(msg.Id), components, stickers, embeds, flags, poll);
+    public static async Task<IUserMessage> ReplyAsync(this IMessage msg, string? text = null, bool isTts = false, Embed? embed = null, RequestOptions? options = null, AllowedMentions? allowedMentions = null, MessageComponent? components = null, ISticker[]? stickers = null, Embed[]? embeds = null, MessageFlags flags = MessageFlags.None, PollProperties? poll = null) => await msg.Channel.SendMessageAsync(text, isTts, embed, options, allowedMentions, new MessageReference(msg.Id), components, stickers, embeds, flags, poll);
     
-    public static async Task<IUserMessage> ReplyFileAsync(this IMessage msg, string filePath, string? text = null, bool isTTS = false, Embed? embed = null, RequestOptions? options = null, bool isSpoiler = false, AllowedMentions? allowedMentions = null, MessageComponent? components = null, ISticker[]? stickers = null, Embed[]? embeds = null, MessageFlags flags = MessageFlags.None, PollProperties? poll = null) => await msg.Channel.SendFileAsync(filePath, text, isTTS, embed, options, isSpoiler, allowedMentions, new MessageReference(msg.Id), components, stickers, embeds, flags, poll);
+    public static async Task<IUserMessage> ReplyFileAsync(this IMessage msg, string filePath, string? text = null, bool isTts = false, Embed? embed = null, RequestOptions? options = null, bool isSpoiler = false, AllowedMentions? allowedMentions = null, MessageComponent? components = null, ISticker[]? stickers = null, Embed[]? embeds = null, MessageFlags flags = MessageFlags.None, PollProperties? poll = null) => await msg.Channel.SendFileAsync(filePath, text, isTts, embed, options, isSpoiler, allowedMentions, new MessageReference(msg.Id), components, stickers, embeds, flags, poll);
 
     public readonly struct Button(string? label = null, string? customId = null, ButtonStyle style = ButtonStyle.Primary, string? url = null, IEmote? emote = null, bool isDisabled = false, ulong? skuId = null) {
         public string? CustomId { get; } = customId;

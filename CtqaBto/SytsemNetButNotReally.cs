@@ -76,7 +76,7 @@ public static class Teapot {
 
         public HttpStatusCode TryToBrewCoffee(ulong userId, string seed, float milk, float sugar) {
             if (Math.Abs((StartedAt - DateTime.Now).TotalHours) > 1) Reset();
-            if (!Bricked) Bricked = Data.random.Next(0, 200) == 0;
+            if (!Bricked) Bricked = Data.Random.Next(0, 200) == 0;
             if (Bricked) return HttpStatusCode.InternalServerError;
             if (ServerConfig.IsNotAllowToUseTeapotStatic(GuildId, userId)) return HttpStatusCode.Forbidden;
             if (RandIntFromString(seed, 0, 4) == 0) return HttpStatusCode.UnsupportedMediaType;
@@ -95,7 +95,7 @@ public static class Teapot {
                                            - (int)(sugar * 20)
                ) == 0) return HttpStatusCode.ImATeapot;
             Loaded += 1f + milk + sugar;
-            if (Data.random.Next(0, 2) == 0) return HttpStatusCode.OK;
+            if (Data.Random.Next(0, 2) == 0) return HttpStatusCode.OK;
             return HttpStatusCode.Accepted;
         }
     }

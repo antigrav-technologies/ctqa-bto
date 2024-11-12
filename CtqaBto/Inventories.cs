@@ -5,8 +5,6 @@ using Antigrav;
 using Discord;
 using Discord.WebSocket;
 using static CtqaBto.Configs;
-using static CtqaBto.Teapot;
-using System.Reflection;
 
 namespace CtqaBto;
 
@@ -19,24 +17,26 @@ public struct SpawnMessageData(CtqaType type = CtqaType.Unknown, ulong messageId
     public string SayToCatch { get; private set; } = sayToCatch;
 }
 
-public class Inventory : IDisposable, IConditionalAntigravSerializable {
+public class Inventory : IDisposable {
     [AntigravSerializable("achs")]
-    public List<AchievementId> Achievements { get; private set; } = [];
+    public List<AchievementId> Achievements = []; // fuck it you can encapsulate objects anyway
 
     [AntigravSerializable("fastest_catch", double.PositiveInfinity)]
-    public double FastestCatch { get; private set; } = double.PositiveInfinity;
+    private double fastestCatch = double.PositiveInfinity;
+
+    public double FastestCatch { get => fastestCatch; }
 
     [AntigravSerializable("slowest_catch", double.NegativeInfinity)]
-    public double SlowestCatch { get; private set; } = double.NegativeInfinity;
+    private double slowestCatch = double.NegativeInfinity;
 
-    [AntigravSerializable("status_codes")]
-    public List<HttpStatusCode>? StatusCodes { get; private set; } = [];
+    public double SlowestCatch { get => slowestCatch; }
 
     [AntigravExtensionData]
-    private Dictionary<CtqaType, long> Ctqas { get; set; } = [];
+    private readonly Dictionary<CtqaType, long> Ctqas = [];
+
     private ulong GuildId;
     public ulong MemberId;
-    public bool DisposeIt { private get; set; } = true;
+    public bool DisposeIt = true;
 
     private static string GetInventoryPath(ulong guildId, ulong memberId) => GetFilePath([Data.InventoriesData, guildId.ToString(), $"{memberId}.antigrav"], "null");
     public long this[CtqaType type] {
@@ -48,8 +48,8 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
     }
     public bool HasAch(AchievementId id) => Achievements.Contains(id);
     public void UpdateCatchTime(double time) {
-        FastestCatch = Math.Min(time, FastestCatch);
-        SlowestCatch = Math.Max(Math.Round(time / 3600, 2), SlowestCatch);
+        fastestCatch = Math.Min(time, fastestCatch);
+        slowestCatch = Math.Max(Math.Round(time / 3600, 2), slowestCatch);
     }
     public long IncrementCtqa(CtqaType type) => ++this[type];
     public long DecrementCtqa(CtqaType type) => --this[type];
@@ -60,15 +60,6 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
     public static void GiftCtqas(Inventory from, Inventory to, CtqaType type, long amount) {
         from[type] -= amount;
         to[type] += amount;
-    } 
-    public bool AddStatusCode(HttpStatusCode code) {
-        if (StatusCodes == null) return false;
-        if (!StatusCodes.Contains(code)) StatusCodes.Add(code);
-        if (StatusCodes.Count == Enum.GetValues<HttpStatusCode>().Length) {
-            StatusCodes = null;
-            return true;
-        }
-        return false;
     }
     public static long IncrementCtqaStatic(ulong guildId, ulong memberId, CtqaType type) {
         using var inv = Load(guildId, memberId);
@@ -137,5 +128,4 @@ public class Inventory : IDisposable, IConditionalAntigravSerializable {
         }
         return Task.CompletedTask;
     }
-    public bool SerializeIt(AntigravSerializable serializable, MemberInfo memberInfo) => serializable.Name != "status_codes";
 }

@@ -3,12 +3,13 @@
 namespace CtqaBto;
 
 internal static class Data {
-    public static Random random = new();
+    public static readonly Random Random = new();
     public static DateTime StartTime = DateTime.MinValue;
     public static readonly string InventoriesData = GetFolderPath(["ctqas"]);
     public static readonly string CtqaChannelsPath = GetFilePath(["ctqa channels.antigrav"], "null");
     public static readonly string CtqasPath = GetFilePath(["ctqas.antigrav"], "null");
-    public static readonly string ImagesPath = "D:\\CtqaBto\\src";
+    public const string ImagesPath = "/home/tema5002/Desktop/D/CtqaBto/src";
+
     public static readonly ulong[] TrustedPeople = [
         558979299177136164,   // tema5002
         1204799892988629054,  // cake64
@@ -21,7 +22,7 @@ internal static class Data {
         "```\nAntigrav.Decoder.ANTIGRAVDecodeError\n  HResult=0x80131500\n  Сообщение = Expecting value: line 1 column 1 (char 0)\n  Источник = Antigrav\n  Трассировка стека:\n   в Antigrav.Decoder.Decode[T](String s) в C:\\Users\\User\\source\\repos\\Antigrav\\Antigrav\\Decoder.cs:строка 508\n   в Antigrav.Main.LoadFromString[T](String s) в C:\\Users\\User\\source\\repos\\Antigrav\\Antigrav\\Main.cs:строка 156\\   в CtqaBto.Program.Main() в D:\\CtqaBto\\CtqaBto\\Program.cs:строка 20\n   в CtqaBto.Program.<Main>()\n```",
         "also try kat bot",
         "gaming",
-        $"ctqa bto stats:\n{Program.client.Guilds.Count} servers\n{Program.client.Guilds.Select(x => x.MemberCount).Sum()} total members",
+        $"ctqa bto stats:\n{Program.Client.Guilds.Count} servers\n{Program.Client.Guilds.Select(x => x.MemberCount).Sum()} total members",
         "gaming",
         "Also try NBTExplorer!",
         "int qwertyuiop[]",
@@ -97,7 +98,9 @@ internal static class Data {
         "scheel computer 🦈💻😜",
         "vote bird for president",
         "```cs\nfinally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally finally\n```",
-        "Aflyde is a robot"
+        "Aflyde is a robot",
+        "oook]",
+        "You can do it but not like we do it",
     ];
-    public static readonly string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
+    public const string Datamine = "ctqa!ΔπβΔ©🐙αλ1Σhh1π1π©🐙Σ1π©βπΔΔ1βππhαββπλβππ🐙ΔhhαΔΔΣ1π🐙βλhαπβ©βββ1πΣβ🐙πΔβΣΔ🐙©αλαh🐙hΣβπh©ΣΔΔ🐙πλΣλλ11λhα🐙Δh©β©©πΔ©ΣβhΔλ🐙πΔβΔΔ🐙©ΣβββλαΔΣπ";
 }
